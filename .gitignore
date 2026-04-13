@@ -1,0 +1,13 @@
+﻿UI_Charts/.vs
+UI_Charts/UI_Charts/bin
+UI_Charts/UI_Charts/obj
+<<<<<<< HEAD
+UI_Charts/UI_Charts.Core/bin
+UI_Charts/UI_Charts.Core/obj
+UI_Charts/UI_Charts.Infrastructure/bin
+UI_Charts/UI_Charts.Infrastructure/obj
+=======
+UI_Charts/bin
+UI_Charts/obj
+.vs
+>>>>>>> abfa4071a97bf5bde71c5898d4cf99ec02cc5751

@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="UI_Charts.Core/UI_Charts.Core.csproj" Id="37f7dad0-989f-49d1-8975-f55fe68f8df6" />
+  <Project Path="UI_Charts.Infrastructure/UI_Charts.Infrastructure.csproj" Id="16c61a61-322d-411b-95ba-315124078141" />
+  <Project Path="UI_Charts/UI_Charts.Desktop.csproj" />
+</Solution>

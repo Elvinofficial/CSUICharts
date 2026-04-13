@@ -1,0 +1,32 @@
+C:\Education\3 COURSE\6 семестр\C# - программирование\КурсоваяC#\UI_Charts\UI_Charts.Infrastructure\bin\Debug\net10.0\UI_Charts.Infrastructure.deps.json
+C:\Education\3 COURSE\6 семестр\C# - программирование\КурсоваяC#\UI_Charts\UI_Charts.Infrastructure\bin\Debug\net10.0\UI_Charts.Infrastructure.dll
+C:\Education\3 COURSE\6 семестр\C# - программирование\КурсоваяC#\UI_Charts\UI_Charts.Infrastructure\bin\Debug\net10.0\UI_Charts.Infrastructure.pdb
+C:\Education\3 COURSE\6 семестр\C# - программирование\КурсоваяC#\UI_Charts\UI_Charts.Infrastructure\bin\Debug\net10.0\UI_Charts.Core.dll
+C:\Education\3 COURSE\6 семестр\C# - программирование\КурсоваяC#\UI_Charts\UI_Charts.Infrastructure\bin\Debug\net10.0\UI_Charts.Core.pdb
+C:\Education\3 COURSE\6 семестр\C# - программирование\КурсоваяC#\UI_Charts\UI_Charts.Infrastructure\obj\Debug\net10.0\UI_Charts.Infrastructure.csproj.AssemblyReference.cache
+C:\Education\3 COURSE\6 семестр\C# - программирование\КурсоваяC#\UI_Charts\UI_Charts.Infrastructure\obj\Debug\net10.0\UI_Charts.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+C:\Education\3 COURSE\6 семестр\C# - программирование\КурсоваяC#\UI_Charts\UI_Charts.Infrastructure\obj\Debug\net10.0\UI_Charts.Infrastructure.AssemblyInfoInputs.cache
+C:\Education\3 COURSE\6 семестр\C# - программирование\КурсоваяC#\UI_Charts\UI_Charts.Infrastructure\obj\Debug\net10.0\UI_Charts.Infrastructure.AssemblyInfo.cs
+C:\Education\3 COURSE\6 семестр\C# - программирование\КурсоваяC#\UI_Charts\UI_Charts.Infrastructure\obj\Debug\net10.0\UI_Charts.Infrastructure.csproj.CoreCompileInputs.cache
+C:\Education\3 COURSE\6 семестр\C# - программирование\КурсоваяC#\UI_Charts\UI_Charts.Infrastructure\obj\Debug\net10.0\UI_Charts.Infrastructure.sourcelink.json
+C:\Education\3 COURSE\6 семестр\C# - программирование\КурсоваяC#\UI_Charts\UI_Charts.Infrastructure\obj\Debug\net10.0\UI_Chart.397FD2F8.Up2Date
+C:\Education\3 COURSE\6 семестр\C# - программирование\КурсоваяC#\UI_Charts\UI_Charts.Infrastructure\obj\Debug\net10.0\UI_Charts.Infrastructure.dll
+C:\Education\3 COURSE\6 семестр\C# - программирование\КурсоваяC#\UI_Charts\UI_Charts.Infrastructure\obj\Debug\net10.0\refint\UI_Charts.Infrastructure.dll
+C:\Education\3 COURSE\6 семестр\C# - программирование\КурсоваяC#\UI_Charts\UI_Charts.Infrastructure\obj\Debug\net10.0\UI_Charts.Infrastructure.pdb
+C:\Education\3 COURSE\6 семестр\C# - программирование\КурсоваяC#\UI_Charts\UI_Charts.Infrastructure\obj\Debug\net10.0\ref\UI_Charts.Infrastructure.dll
+C:\Users\Vadim\Desktop\КурсоваяC#\UI_Charts.Infrastructure\bin\Debug\net10.0\UI_Charts.Infrastructure.deps.json
+C:\Users\Vadim\Desktop\КурсоваяC#\UI_Charts.Infrastructure\bin\Debug\net10.0\UI_Charts.Infrastructure.dll
+C:\Users\Vadim\Desktop\КурсоваяC#\UI_Charts.Infrastructure\bin\Debug\net10.0\UI_Charts.Infrastructure.pdb
+C:\Users\Vadim\Desktop\КурсоваяC#\UI_Charts.Infrastructure\bin\Debug\net10.0\UI_Charts.Core.dll
+C:\Users\Vadim\Desktop\КурсоваяC#\UI_Charts.Infrastructure\bin\Debug\net10.0\UI_Charts.Core.pdb
+C:\Users\Vadim\Desktop\КурсоваяC#\UI_Charts.Infrastructure\obj\Debug\net10.0\UI_Charts.Infrastructure.csproj.AssemblyReference.cache
+C:\Users\Vadim\Desktop\КурсоваяC#\UI_Charts.Infrastructure\obj\Debug\net10.0\UI_Charts.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Vadim\Desktop\КурсоваяC#\UI_Charts.Infrastructure\obj\Debug\net10.0\UI_Charts.Infrastructure.AssemblyInfoInputs.cache
+C:\Users\Vadim\Desktop\КурсоваяC#\UI_Charts.Infrastructure\obj\Debug\net10.0\UI_Charts.Infrastructure.AssemblyInfo.cs
+C:\Users\Vadim\Desktop\КурсоваяC#\UI_Charts.Infrastructure\obj\Debug\net10.0\UI_Charts.Infrastructure.csproj.CoreCompileInputs.cache
+C:\Users\Vadim\Desktop\КурсоваяC#\UI_Charts.Infrastructure\obj\Debug\net10.0\UI_Charts.Infrastructure.sourcelink.json
+C:\Users\Vadim\Desktop\КурсоваяC#\UI_Charts.Infrastructure\obj\Debug\net10.0\UI_Chart.397FD2F8.Up2Date
+C:\Users\Vadim\Desktop\КурсоваяC#\UI_Charts.Infrastructure\obj\Debug\net10.0\UI_Charts.Infrastructure.dll
+C:\Users\Vadim\Desktop\КурсоваяC#\UI_Charts.Infrastructure\obj\Debug\net10.0\refint\UI_Charts.Infrastructure.dll
+C:\Users\Vadim\Desktop\КурсоваяC#\UI_Charts.Infrastructure\obj\Debug\net10.0\UI_Charts.Infrastructure.pdb
+C:\Users\Vadim\Desktop\КурсоваяC#\UI_Charts.Infrastructure\obj\Debug\net10.0\ref\UI_Charts.Infrastructure.dll
