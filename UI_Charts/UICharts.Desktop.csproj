@@ -15,8 +15,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\UI_Charts.Core\UI_Charts.Core.csproj" />
-    <ProjectReference Include="..\UI_Charts.Infrastructure\UI_Charts.Infrastructure.csproj" />
+    <ProjectReference Include="..\UI_Charts.Core\UICharts.Core.csproj" />
+    <ProjectReference Include="..\UI_Charts.Infrastructure\UICharts.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,6 +1,6 @@
 ﻿using Prism.Mvvm;
 
-namespace UI_Charts.ViewModels
+namespace UICharts.Desktop.ViewModels
 {
     public class MainWindowViewModel : BindableBase
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace UI_Charts.Core.Interfaces
+namespace UICharts.Core.Interfaces
 {
     internal class IProjectService
     {
