@@ -4,7 +4,7 @@ using System.Text;
 
 namespace UICharts.Core.Models
 {
-    internal class BlockModel
+    public class BlockModel
     {
     }
 }

@@ -4,7 +4,11 @@ using System.Text;
 
 namespace UICharts.Core.Models
 {
-    internal class DiagramModel
+    public class DiagramModel
     {
+        public string Name { get; set; }
+
+        public List<BlockModel> Blocks { get; set; } = new();
+        public List<ConnectionModel> Connections { get; set; } = new();
     }
 }
