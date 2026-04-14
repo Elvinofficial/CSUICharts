@@ -91,7 +91,7 @@
                     <TabControl ItemsSource="{Binding Workspaces}"
                 SelectedItem="{Binding SelectedWorkspace}"
                 Background="#ECECEC"
-                BorderThickness="0">
+                BorderThickness="2">
 
                         <TabControl.ItemTemplate>
                             <DataTemplate>
@@ -100,6 +100,12 @@
                            FontSize="14"/>
                             </DataTemplate>
                         </TabControl.ItemTemplate>
+
+                        <TabControl.ContentTemplate>
+                            <DataTemplate>
+                                <Grid/>
+                            </DataTemplate>
+                        </TabControl.ContentTemplate>
 
                     </TabControl>
 
@@ -173,7 +179,8 @@
                         <Button Content="Создать"
                 Width="120"
                 Height="35"
-                Margin="10,0"/>
+                Margin="10,0"
+                Command="{Binding CreateWorkspaceCommand}"/>
 
                         <Button Content="Открыть"
                 Width="120"

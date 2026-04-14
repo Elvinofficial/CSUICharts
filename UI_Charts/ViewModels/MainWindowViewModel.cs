@@ -1,6 +1,8 @@
 ﻿using Prism.Mvvm;
 using System.Collections.ObjectModel;
 using UICharts.Core.Models;
+using Prism.Commands;
+
 namespace UICharts.Desktop.ViewModels
 {
     public class MainWindowViewModel : BindableBase
@@ -10,14 +12,14 @@ namespace UICharts.Desktop.ViewModels
         /// </summary>
         public ObservableCollection<FigureItemModel> Figures { get; } = new();
 
-        private FigureItemModel _selectedFigure;
+        private FigureItemModel selectedFigure;
         
         public FigureItemModel SelectedFigure
         {
-            get => _selectedFigure;
+            get => selectedFigure;
             set
             {
-                if (SetProperty(ref _selectedFigure, value))
+                if (SetProperty(ref selectedFigure, value))
                 {
                     RaisePropertyChanged(nameof(SelectedFigureName));
                 }
@@ -28,13 +30,13 @@ namespace UICharts.Desktop.ViewModels
 
         public ObservableCollection<WorkspaceItemModel> Workspaces { get; } = new();
 
-        private WorkspaceItemModel _selectedWorkspace;
+        private WorkspaceItemModel selectedWorkspace;
         public WorkspaceItemModel SelectedWorkspace
         {
-            get => _selectedWorkspace;
+            get => selectedWorkspace;
             set
             {
-                if (SetProperty(ref _selectedWorkspace, value))
+                if (SetProperty(ref selectedWorkspace, value))
                 {
                     RaisePropertyChanged(nameof(SelectedWorkspaceName));
                     RaisePropertyChanged(nameof(CurrentBlockCount));
@@ -49,6 +51,10 @@ namespace UICharts.Desktop.ViewModels
 
         public int CurrentConnectionCount => SelectedWorkspace?.Diagram?.Connections?.Count ?? 0;
 
+        public DelegateCommand CreateWorkspaceCommand { get; }
+
+        private int workspaceCounter = 0;
+
         public MainWindowViewModel()
         {
             Figures.Add(new FigureItemModel { Name = "Процесс" });
@@ -58,25 +64,27 @@ namespace UICharts.Desktop.ViewModels
 
             SelectedFigure = Figures[0];
 
-            Workspaces.Add(new WorkspaceItemModel
-            {
-                Name = "Рабочее окно 1",
-                Diagram = new DiagramModel { Name = "Диаграмма 1" }
-            });
+            
 
-            Workspaces.Add(new WorkspaceItemModel
-            {
-                Name = "Рабочее окно 2",
-                Diagram = new DiagramModel { Name = "Диаграмма 2" }
-            });
+            CreateWorkspaceCommand = new DelegateCommand(OnCreateWorkspace);
+        }
 
-            Workspaces.Add(new WorkspaceItemModel
+        private void OnCreateWorkspace()
+        {
+            workspaceCounter++;
+            var workspace = new WorkspaceItemModel
             {
-                Name = "Рабочее окно 3",
-                Diagram = new DiagramModel { Name = "Диаграмма 3" }
-            });
+                Name = $"Рабочее окно {workspaceCounter}",
+                Diagram = new DiagramModel
+                {
+                    Name = $"Диаграмма {workspaceCounter}"
+                }
 
-            SelectedWorkspace = Workspaces[0];
+            };
+            Workspaces.Add(workspace);
+            SelectedWorkspace = workspace;
         }
     }
+
+    
 }
