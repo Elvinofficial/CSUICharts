@@ -10,25 +10,9 @@ namespace UICharts.Desktop.ViewModels
         /// <summary>
         /// Коллекция доступных фигур для добавления на диаграмму. В реальном приложении эти данные могут загружаться из базы данных или конфигурационного файла.
         /// </summary>
-        public ObservableCollection<FigureItemModel> Figures { get; } = new();
-
-        private FigureItemModel selectedFigure;
-        
-        public FigureItemModel SelectedFigure
-        {
-            get => selectedFigure;
-            set
-            {
-                if (SetProperty(ref selectedFigure, value))
-                {
-                    RaisePropertyChanged(nameof(SelectedFigureName));
-                }
-            }
-        }
-
-        public string SelectedFigureName => SelectedFigure?.Name ?? "Не выбрана";
-
         public ObservableCollection<WorkspaceItemModel> Workspaces { get; } = new();
+
+        public EditorViewModel Editor { get; } = new();
 
         private WorkspaceItemModel selectedWorkspace;
         public WorkspaceItemModel SelectedWorkspace
@@ -38,6 +22,8 @@ namespace UICharts.Desktop.ViewModels
             {
                 if (SetProperty(ref selectedWorkspace, value))
                 {
+                    Editor.CurrentDiagram = value?.Diagram;
+
                     RaisePropertyChanged(nameof(SelectedWorkspaceName));
                     RaisePropertyChanged(nameof(CurrentBlockCount));
                     RaisePropertyChanged(nameof(CurrentConnectionCount));
@@ -57,15 +43,6 @@ namespace UICharts.Desktop.ViewModels
 
         public MainWindowViewModel()
         {
-            Figures.Add(new FigureItemModel { Name = "Процесс" });
-            Figures.Add(new FigureItemModel { Name = "Решение" });
-            Figures.Add(new FigureItemModel { Name = "Начало / конец" });
-            Figures.Add(new FigureItemModel { Name = "Ввод / вывод" });
-
-            SelectedFigure = Figures[0];
-
-            
-
             CreateWorkspaceCommand = new DelegateCommand(OnCreateWorkspace);
         }
 
