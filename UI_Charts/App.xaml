@@ -1,4 +1,4 @@
-﻿<prism:PrismApplication x:Class="UI_Charts.App"
+﻿<prism:PrismApplication x:Class="UICharts.App"
                          xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                          xmlns:prism="http://prismlibrary.com/">

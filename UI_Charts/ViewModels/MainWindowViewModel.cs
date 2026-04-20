@@ -2,7 +2,9 @@
 using Prism.Mvvm;
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
+using UICharts.Core.Interfaces;
 using UICharts.Core.Models;
+using UICharts.Infrastructure.Services;
 
 namespace UICharts.Desktop.ViewModels
 {
@@ -41,7 +43,7 @@ namespace UICharts.Desktop.ViewModels
 
         private int workspaceCounter = 0;
 
-        public MainWindowViewModel()
+        public MainWindowViewModel(IProjectService a)
         {
             CreateWorkspaceCommand = new DelegateCommand(OnCreateWorkspace);
 

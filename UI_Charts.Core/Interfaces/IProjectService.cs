@@ -4,7 +4,7 @@ using System.Text;
 
 namespace UICharts.Core.Interfaces
 {
-    internal class IProjectService
+    public interface IProjectService
     {
     }
 }
