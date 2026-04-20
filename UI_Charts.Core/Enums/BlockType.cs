@@ -4,7 +4,11 @@ using System.Text;
 
 namespace UICharts.Core.Enums
 {
-    internal class BlockType
+    public enum BlockType
     {
+        Process,
+        Decision,
+        StartEnd,
+        InputOutput
     }
 }

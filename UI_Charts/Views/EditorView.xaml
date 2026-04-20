@@ -2,18 +2,338 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:UICharts.Desktop.Views"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <Border
-        CornerRadius="35"
-        BorderBrush="Black"
-        BorderThickness="2"
-        Background="#ECECEC"
-        Padding="10">
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:viewmodels="clr-namespace:UICharts.Desktop.ViewModels"
+             xmlns:enums="clr-namespace:UICharts.Core.Enums;assembly=UICharts.Core"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type=viewmodels:EditorViewModel}"
+             d:DesignHeight="450"
+             d:DesignWidth="800">
 
-        <Canvas Background="#F8F8F8"/>
+    <UserControl.Resources>
 
+        <!-- Процесс -->
+        <DataTemplate x:Key="ProcessTemplate">
+            <Grid Width="120"
+                  Height="60"
+                  MouseLeftButtonDown="Block_MouseLeftButtonDown"
+                  MouseMove="Block_MouseMove"
+                  MouseLeftButtonUp="Block_MouseLeftButtonUp">
+                <Rectangle>
+                    <Rectangle.Style>
+                        <Style TargetType="Rectangle">
+                            <Setter Property="Fill" Value="White"/>
+                            <Setter Property="Stroke" Value="Black"/>
+                            <Setter Property="StrokeThickness" Value="2"/>
+
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                    <Setter Property="Fill" Value="#EAF3FF"/>
+                                    <Setter Property="Stroke" Value="DodgerBlue"/>
+                                    <Setter Property="StrokeThickness" Value="3"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Rectangle.Style>
+                </Rectangle>
+
+                <TextBlock Text="{Binding Text}"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           TextAlignment="Center"
+                           TextWrapping="Wrap">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Visibility" Value="Visible"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+
+                <TextBox Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}"
+                         HorizontalAlignment="Stretch"
+                         VerticalAlignment="Center"
+                         TextAlignment="Center"
+                         TextWrapping="Wrap"
+                         KeyDown="EditTextBox_KeyDown"
+                         LostFocus="EditTextBox_LostFocus">
+                    <TextBox.Style>
+                        <Style TargetType="TextBox">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBox.Style>
+                </TextBox>
+            </Grid>
+        </DataTemplate>
+
+        <!-- Решение -->
+        <DataTemplate x:Key="DecisionTemplate">
+            <Grid Width="120"
+                  Height="80"
+                  MouseLeftButtonDown="Block_MouseLeftButtonDown"
+                  MouseMove="Block_MouseMove"
+                  MouseLeftButtonUp="Block_MouseLeftButtonUp">
+                <Polygon Points="60,0 120,40 60,80 0,40">
+                    <Polygon.Style>
+                        <Style TargetType="Polygon">
+                            <Setter Property="Fill" Value="White"/>
+                            <Setter Property="Stroke" Value="Black"/>
+                            <Setter Property="StrokeThickness" Value="2"/>
+
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                    <Setter Property="Fill" Value="#EAF3FF"/>
+                                    <Setter Property="Stroke" Value="DodgerBlue"/>
+                                    <Setter Property="StrokeThickness" Value="3"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Polygon.Style>
+                </Polygon>
+
+                <TextBlock Text="{Binding Text}"
+           HorizontalAlignment="Center"
+           VerticalAlignment="Center"
+           TextAlignment="Center"
+           TextWrapping="Wrap">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Visibility" Value="Visible"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+
+                <TextBox Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}"
+         HorizontalAlignment="Stretch"
+         VerticalAlignment="Center"
+         TextAlignment="Center"
+         TextWrapping="Wrap"
+         KeyDown="EditTextBox_KeyDown"
+         LostFocus="EditTextBox_LostFocus">
+                    <TextBox.Style>
+                        <Style TargetType="TextBox">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBox.Style>
+                </TextBox>
+
+
+            </Grid>
+        </DataTemplate>
+
+        <!-- Начало / конец -->
+        <DataTemplate x:Key="StartEndTemplate">
+            <Grid Width="120"
+                  Height="60"
+                  MouseLeftButtonDown="Block_MouseLeftButtonDown"
+                  MouseMove="Block_MouseMove"
+                  MouseLeftButtonUp="Block_MouseLeftButtonUp">
+                <Ellipse>
+                    <Ellipse.Style>
+                        <Style TargetType="Ellipse">
+                            <Setter Property="Fill" Value="White"/>
+                            <Setter Property="Stroke" Value="Black"/>
+                            <Setter Property="StrokeThickness" Value="2"/>
+
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                    <Setter Property="Fill" Value="#EAF3FF"/>
+                                    <Setter Property="Stroke" Value="DodgerBlue"/>
+                                    <Setter Property="StrokeThickness" Value="3"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Ellipse.Style>
+                </Ellipse>
+
+                <TextBlock Text="{Binding Text}"
+           HorizontalAlignment="Center"
+           VerticalAlignment="Center"
+           TextAlignment="Center"
+           TextWrapping="Wrap">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Visibility" Value="Visible"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+
+                <TextBox Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}"
+         HorizontalAlignment="Stretch"
+         VerticalAlignment="Center"
+         TextAlignment="Center"
+         TextWrapping="Wrap"
+         KeyDown="EditTextBox_KeyDown"
+         LostFocus="EditTextBox_LostFocus">
+                    <TextBox.Style>
+                        <Style TargetType="TextBox">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBox.Style>
+                </TextBox>
+
+            </Grid>
+        </DataTemplate>
+
+        <!-- Ввод / вывод -->
+        <DataTemplate x:Key="InputOutputTemplate">
+            <Grid Width="140"
+                  Height="60"
+                  MouseLeftButtonDown="Block_MouseLeftButtonDown"
+                  MouseMove="Block_MouseMove"
+                  MouseLeftButtonUp="Block_MouseLeftButtonUp">
+                <Polygon Points="20,0 140,0 120,60 0,60">
+                    <Polygon.Style>
+                        <Style TargetType="Polygon">
+                            <Setter Property="Fill" Value="White"/>
+                            <Setter Property="Stroke" Value="Black"/>
+                            <Setter Property="StrokeThickness" Value="2"/>
+
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                    <Setter Property="Fill" Value="#EAF3FF"/>
+                                    <Setter Property="Stroke" Value="DodgerBlue"/>
+                                    <Setter Property="StrokeThickness" Value="3"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Polygon.Style>
+                </Polygon>
+
+                <TextBlock Text="{Binding Text}"
+           HorizontalAlignment="Center"
+           VerticalAlignment="Center"
+           TextAlignment="Center"
+           TextWrapping="Wrap">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Visibility" Value="Visible"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+
+                <TextBox Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}"
+         HorizontalAlignment="Stretch"
+         VerticalAlignment="Center"
+         TextAlignment="Center"
+         TextWrapping="Wrap"
+         KeyDown="EditTextBox_KeyDown"
+         LostFocus="EditTextBox_LostFocus">
+                    <TextBox.Style>
+                        <Style TargetType="TextBox">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBox.Style>
+                </TextBox>
+
+            </Grid>
+        </DataTemplate>
+
+    </UserControl.Resources>
+
+    <Border CornerRadius="35"
+            BorderBrush="Black"
+            BorderThickness="2"
+            Background="#ECECEC"
+            Padding="10">
+
+        <Canvas x:Name="EditorCanvas"
+                Background="#F8F8F8"
+                MouseLeftButtonDown="Canvas_MouseLeftButtonDown">
+
+            <ItemsControl ItemsSource="{Binding Blocks}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+
+                <ItemsControl.ItemContainerStyle>
+                    <Style TargetType="ContentPresenter">
+                        <Setter Property="Canvas.Left" Value="{Binding X}" />
+                        <Setter Property="Canvas.Top" Value="{Binding Y}" />
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <ContentControl Content="{Binding}">
+                            <ContentControl.Style>
+                                <Style TargetType="ContentControl">
+                                    <Setter Property="ContentTemplate"
+                                            Value="{StaticResource ProcessTemplate}" />
+
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Type}"
+                                                     Value="{x:Static enums:BlockType.Decision}">
+                                            <Setter Property="ContentTemplate"
+                                                    Value="{StaticResource DecisionTemplate}" />
+                                        </DataTrigger>
+
+                                        <DataTrigger Binding="{Binding Type}"
+                                                     Value="{x:Static enums:BlockType.StartEnd}">
+                                            <Setter Property="ContentTemplate"
+                                                    Value="{StaticResource StartEndTemplate}" />
+                                        </DataTrigger>
+
+                                        <DataTrigger Binding="{Binding Type}"
+                                                     Value="{x:Static enums:BlockType.InputOutput}">
+                                            <Setter Property="ContentTemplate"
+                                                    Value="{StaticResource InputOutputTemplate}" />
+                                        </DataTrigger>
+
+                                        <DataTrigger Binding="{Binding Type}"
+                                                     Value="{x:Static enums:BlockType.Process}">
+                                            <Setter Property="ContentTemplate"
+                                                    Value="{StaticResource ProcessTemplate}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ContentControl.Style>
+                        </ContentControl>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+        </Canvas>
     </Border>
 </UserControl>

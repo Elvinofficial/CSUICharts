@@ -1,18 +1,18 @@
-﻿using Prism.Mvvm;
+﻿using Prism.Commands;
+using Prism.Mvvm;
 using System.Collections.ObjectModel;
+using System.Windows.Controls;
 using UICharts.Core.Models;
-using Prism.Commands;
 
 namespace UICharts.Desktop.ViewModels
 {
     public class MainWindowViewModel : BindableBase
     {
-        /// <summary>
-        /// Коллекция доступных фигур для добавления на диаграмму. В реальном приложении эти данные могут загружаться из базы данных или конфигурационного файла.
-        /// </summary>
         public ObservableCollection<WorkspaceItemModel> Workspaces { get; } = new();
 
         public EditorViewModel Editor { get; } = new();
+
+        public ToolboxViewModel Toolbox { get; } = new();
 
         private WorkspaceItemModel selectedWorkspace;
         public WorkspaceItemModel SelectedWorkspace
@@ -44,6 +44,10 @@ namespace UICharts.Desktop.ViewModels
         public MainWindowViewModel()
         {
             CreateWorkspaceCommand = new DelegateCommand(OnCreateWorkspace);
+
+            Editor.Toolbox = Toolbox;
+
+            OnCreateWorkspace();
         }
 
         private void OnCreateWorkspace()
@@ -51,7 +55,7 @@ namespace UICharts.Desktop.ViewModels
             workspaceCounter++;
             var workspace = new WorkspaceItemModel
             {
-                Name = $"Рабочее окно {workspaceCounter}",
+                Name = $"Вкладка {workspaceCounter}",
                 Diagram = new DiagramModel
                 {
                     Name = $"Диаграмма {workspaceCounter}"

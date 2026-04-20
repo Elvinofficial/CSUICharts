@@ -29,10 +29,28 @@ namespace UICharts.Desktop.ViewModels
 
         public ToolboxViewModel()
         {
-            Figures.Add(new FigureItemModel { Name = "Процесс" });
-            Figures.Add(new FigureItemModel { Name = "Решение" });
-            Figures.Add(new FigureItemModel { Name = "Начало / конец" });
-            Figures.Add(new FigureItemModel { Name = "Ввод / вывод" });
+            Figures.Add(new FigureItemModel 
+            { 
+                Name = "Процесс",
+                Type = Core.Enums.BlockType.Process
+            });
+            Figures.Add(new FigureItemModel 
+            { 
+                Name = "Решение",
+                Type = Core.Enums.BlockType.Decision
+            
+            });
+            Figures.Add(new FigureItemModel 
+            { 
+                Name = "Начало / конец", 
+                Type = Core.Enums.BlockType.StartEnd
+            
+            });
+            Figures.Add(new FigureItemModel { 
+                Name = "Ввод / вывод",
+                Type = Core.Enums.BlockType.InputOutput
+
+            });
 
             SelectedFigure = Figures[0];
         }
