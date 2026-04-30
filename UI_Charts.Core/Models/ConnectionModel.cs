@@ -6,5 +6,7 @@ namespace UICharts.Core.Models
 {
     public class ConnectionModel
     {
+        public BlockModel From { get; set; }
+        public BlockModel To { get; set; }
     }
 }

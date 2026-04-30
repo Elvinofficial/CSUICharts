@@ -10,7 +10,7 @@ namespace UICharts.Core.Models
         public required string Name { get; set; }
 
         public List<BlockModel> Blocks { get; set; } = new();
-        public ObservableCollection<ConnectionModel> Connections { get; set; } = new();
+        public List<ConnectionModel> Connections { get; set; } = new();
 
     }
 }

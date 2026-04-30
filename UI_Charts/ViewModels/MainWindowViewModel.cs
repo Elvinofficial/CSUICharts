@@ -1,10 +1,6 @@
-﻿using Prism.Commands;
-using Prism.Mvvm;
-using System.Collections.ObjectModel;
-using System.Windows.Controls;
+﻿using System.Collections.ObjectModel;
 using UICharts.Core.Interfaces;
 using UICharts.Core.Models;
-using UICharts.Infrastructure.Services;
 
 namespace UICharts.Desktop.ViewModels
 {
@@ -12,9 +8,9 @@ namespace UICharts.Desktop.ViewModels
     {
         public ObservableCollection<WorkspaceItemModel> Workspaces { get; } = new();
 
-        public EditorViewModel Editor { get; } = new();
+        public EditorViewModel Editor { get; }
 
-        public ToolboxViewModel Toolbox { get; } = new();
+        public ToolboxViewModel Toolbox { get; }
 
         private WorkspaceItemModel selectedWorkspace;
         public WorkspaceItemModel SelectedWorkspace
@@ -47,7 +43,16 @@ namespace UICharts.Desktop.ViewModels
         {
             CreateWorkspaceCommand = new DelegateCommand(OnCreateWorkspace);
 
-            Editor.Toolbox = Toolbox;
+            Toolbox = new ToolboxViewModel();
+            Editor = new EditorViewModel();
+
+            Toolbox.PropertyChanged += (_, e) =>
+            {
+                if (e.PropertyName == nameof(ToolboxViewModel.SelectedFigure))
+                {
+                    Editor.SelectedFigure = Toolbox.SelectedFigure;
+                }
+            };
 
             OnCreateWorkspace();
         }
@@ -68,6 +73,4 @@ namespace UICharts.Desktop.ViewModels
             SelectedWorkspace = workspace;
         }
     }
-
-    
 }

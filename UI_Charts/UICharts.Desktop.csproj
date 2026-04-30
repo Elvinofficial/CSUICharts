@@ -19,4 +19,5 @@
     <ProjectReference Include="..\UI_Charts.Infrastructure\UICharts.Infrastructure.csproj" />
   </ItemGroup>
 
+
 </Project>

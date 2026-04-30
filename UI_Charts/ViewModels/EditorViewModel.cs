@@ -1,15 +1,21 @@
-﻿using Prism.Mvvm;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Text;
-using UICharts.Core.Enums;
+﻿using System.Collections.ObjectModel;
+using System.Windows;
 using UICharts.Core.Models;
+using UICharts.Desktop.Interaction;
+using UICharts.Desktop.Services;
 
 namespace UICharts.Desktop.ViewModels
 {
     public class EditorViewModel : BindableBase
     {
+        private readonly BlockDragService dragService = new();
+
+        private readonly ConnectionService connectionService = new();
+
+        private readonly DiagramMappingService mappingService = new();
+
+        private readonly SelectionService selectionService = new();
+
         private DiagramModel? currentDiagram;
         public DiagramModel? CurrentDiagram
         {
@@ -22,9 +28,10 @@ namespace UICharts.Desktop.ViewModels
                 }
             }
         }
-
         public ObservableCollection<BlockViewModel> Blocks => blocks;
+
         private BlockViewModel? selectedBlock;
+
         private readonly ObservableCollection<BlockViewModel> blocks = new();
 
         public BlockViewModel? SelectedBlock
@@ -32,49 +39,70 @@ namespace UICharts.Desktop.ViewModels
             get => selectedBlock;
             set => SetProperty(ref selectedBlock, value);
         }
+        public ObservableCollection<ConnectionViewModel> Connections { get; } = new();
 
-        public ToolboxViewModel? Toolbox { get; set; } // Убрать ! Здесь должна быть только фигура а не тулбокс
+        private bool isConnectionMode;
+        public bool IsConnectionMode
+        {
+            get => isConnectionMode;
+            set => SetProperty(ref isConnectionMode, value);
+        }
 
+        private FigureItemModel? selectedFigure;
+
+        public FigureItemModel? SelectedFigure
+        {
+            get => selectedFigure;
+            set => SetProperty(ref selectedFigure, value);
+        }
         public DelegateCommand<System.Windows.Point?> CanvasClickCommand { get; }
         public DelegateCommand<BlockViewModel> SelectBlockCommand { get; }
         public DelegateCommand<BlockViewModel> BeginEditBlockCommand { get; }
         public DelegateCommand<BlockViewModel> EndEditBlockCommand { get; }
-
+        public DelegateCommand<BlockMouseEventArgs> BlockMouseDownCommand { get; }
+        public DelegateCommand<Point?> BlockMouseMoveCommand { get; }
+        public DelegateCommand BlockMouseUpCommand { get; }
+        public DelegateCommand ToggleConnectionModeCommand { get; }
         public EditorViewModel()
         {
             CanvasClickCommand = new DelegateCommand<System.Windows.Point?>(OnCanvasClick);
             SelectBlockCommand = new DelegateCommand<BlockViewModel>(OnSelectBlock);
             BeginEditBlockCommand = new DelegateCommand<BlockViewModel>(OnBeginEditBlock);
             EndEditBlockCommand = new DelegateCommand<BlockViewModel>(OnEndEditBlock);
+
+            ToggleConnectionModeCommand = new DelegateCommand(() =>
+            {
+                IsConnectionMode = !IsConnectionMode;
+                connectionService.Reset();
+            });
+
+            BlockMouseDownCommand = new DelegateCommand<BlockMouseEventArgs>(OnBlockMouseDown);
+            BlockMouseMoveCommand = new DelegateCommand<Point?>(OnBlockMouseMove);
+            BlockMouseUpCommand = new DelegateCommand(OnBlockMouseUp);
         }
 
         private void LoadBlocksFromDiagram()
         {
-            Blocks.Clear();
+            connectionService.Reset();
+            SelectedBlock = null;
 
-            if (CurrentDiagram == null)
-                return;
-
-            foreach (var block in CurrentDiagram.Blocks)
-            {
-                Blocks.Add(new BlockViewModel(block));
-            }
+            mappingService.Map(CurrentDiagram, Blocks, Connections);
         }
 
         private void OnCanvasClick(System.Windows.Point? point)
         {
-            if (point == null || CurrentDiagram == null || Toolbox?.SelectedFigure == null)
+            if (point == null || CurrentDiagram == null || SelectedFigure == null)
                 return;
 
-            if (IsEditingAnyBlock())
+            if (selectionService.IsEditingAny(Blocks))
                 return;
 
             var model = new BlockModel
             {
                 X = point.Value.X,
                 Y = point.Value.Y,
-                Text = Toolbox.SelectedFigure.Name,
-                Type = Toolbox.SelectedFigure.Type
+                Text = SelectedFigure.Name,
+                Type = SelectedFigure.Type
             };
 
             CurrentDiagram.Blocks.Add(model);
@@ -82,52 +110,84 @@ namespace UICharts.Desktop.ViewModels
             var vm = new BlockViewModel(model);
             Blocks.Add(vm);
 
-            ClearSelection();
+            selectionService.ClearSelection(Blocks);
             vm.IsSelected = true;
             SelectedBlock = vm;
-            this.Toolbox.SelectedFigure = null;
+            SelectedFigure = null;
         }
 
         private void OnSelectBlock(BlockViewModel? block)
         {
             if (block == null)
                 return;
-            ClearSelection();
-            block.IsSelected = true;
-            SelectedBlock = block;
+       
+
+            if (IsConnectionMode)
+            {
+                HandleConnectionClick(block);
+                return;
+            }
+            selectionService.SelectBlock(Blocks, block, out var selected);
+            SelectedBlock = selected;
         }
 
         private void OnBeginEditBlock(BlockViewModel? block)
         {
-            if(block == null)
+            if (block == null)
                 return;
 
-            ClearSelection();
-            block.IsSelected = true;
-            block.IsEditing = true;
-            SelectedBlock = block;
+            selectionService.BeginEdit(Blocks, block, out var selected);
+            SelectedBlock = selected;
         }
 
         private void OnEndEditBlock(BlockViewModel? block)
         {
             if (block == null)
                 return;
-            block.IsEditing = false;
+
+            selectionService.EndEdit(block);
         }
 
-        private bool IsEditingAnyBlock()
+        public void HandleConnectionClick(BlockViewModel block)
         {
-            return Blocks.Any(b => b.IsEditing);
+            connectionService.HandleConnectionClick(block, CurrentDiagram,Connections);
         }
 
-        private void ClearSelection()
+        private void OnBlockMouseDown(BlockMouseEventArgs args)
         {
-            foreach (var block in Blocks)
+            if (args == null)
+                return;
+
+            selectionService.EndEditingAll(Blocks);
+
+            if (args.IsShiftPressed)
             {
-                block.IsSelected = false;
+                HandleConnectionClick(args.Block);
+                return;
             }
 
-            SelectedBlock = null;
+            if (args.ClickCount == 2)
+            {
+                OnBeginEditBlock(args.Block);
+                return;
+            }
+
+            OnSelectBlock(args.Block);
+
+            dragService.StartDrag(args.Block, args.MousePosition);
+        }
+
+        private void OnBlockMouseMove(Point? point)
+        {
+            if (point == null)
+                return;
+
+            dragService.DragTo(point.Value);
+        }
+
+        private void OnBlockMouseUp()
+        {
+            dragService.EndDrag();
         }
     }
 }

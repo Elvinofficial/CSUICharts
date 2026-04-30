@@ -1,0 +1,35 @@
+﻿<UserControl x:Class="UICharts.Desktop.Views.WorkSpaceView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Border 
+        CornerRadius="8"
+        BorderBrush="Black"
+        BorderThickness="2"
+        Background="#ECECEC"
+        Padding="8">
+
+        <TabControl 
+            ItemsSource="{Binding Workspaces}"
+            SelectedItem="{Binding SelectedWorkspace}"
+            Background="#ECECEC"
+            BorderThickness="2">
+
+            <TabControl.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Name}"
+                               Margin="10,2"
+                               FontSize="14"/>
+                </DataTemplate>
+            </TabControl.ItemTemplate>
+
+            <TabControl.ContentTemplate>
+                <DataTemplate>
+                    <Grid/>
+                </DataTemplate>
+            </TabControl.ContentTemplate>
+
+        </TabControl>
+
+    </Border>
+</UserControl>

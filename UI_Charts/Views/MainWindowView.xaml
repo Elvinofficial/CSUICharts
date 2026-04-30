@@ -1,5 +1,4 @@
 ﻿<Window 
-    
     x:Class="UICharts.Desktop.Views.MainWindowView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -14,24 +13,19 @@
     Width="1250"
     prism:ViewModelLocator.AutoWireViewModel="True"
     d:DataContext="{d:DesignInstance vm:MainWindowViewModel, IsDesignTimeCreatable=False}"
-    
     >
-    
-    <!--<Window.DataContext>
-        <vm:MainWindowViewModel />
-    </Window.DataContext>-->
 
     <Grid 
         Background="#F3F3F3"
-        Margin="20">
+        Margin="0,0,0,-6">
         <Border 
             CornerRadius="35"        
             BorderThickness="2"
             Background="#F3F3F3"
             Padding="18"
-            Margin="-16,-19,-18,-17">
+            Margin="0,10,10,24">
             <Grid>
-                    
+
                 <Grid.RowDefinitions>
                     <RowDefinition Height="66"/>
                     <RowDefinition/>
@@ -50,96 +44,25 @@
                     Grid.Row="0"
                     Grid.RowSpan="3"
                     Grid.Column="0"
-                    Grid.ColumnSpan="2"/>
+                    Grid.ColumnSpan="2" Margin="10,0,0,-20"/>
 
-                <!-- WorkSpaceView (должно быть, пока все тут) -->
-                <Border 
-                    Grid.Row="0"
-                    Grid.Column="2"
-                    CornerRadius="8"
-                    BorderBrush="Black"
-                    BorderThickness="2"
-                    Background="#ECECEC"
-                    Margin="0,-15,0,10"
-                    Padding="8">    
-
-                    <TabControl 
-                        ItemsSource="{Binding Workspaces}"
-                        SelectedItem="{Binding SelectedWorkspace}"
-                        Background="#ECECEC"
-                        BorderThickness="2">
-
-                        <TabControl.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Name}" Margin="10,2" FontSize="14"/>
-                            </DataTemplate>
-                        </TabControl.ItemTemplate>
-                        
-                        <!-- Заглушка, почему то появляется имя объекта -->
-                        <TabControl.ContentTemplate>
-                            <DataTemplate>
-                                <Grid/>
-                            </DataTemplate>
-                        </TabControl.ContentTemplate>
-
-                    </TabControl>
-
-                </Border>
+                <!-- WorkSpaceView -->
+                <views:WorkSpaceView
+                Grid.Row="0"
+                Grid.Column="2"
+                Margin="0,-15,-20,10"/>
 
                 <!-- EditorView -->
                 <views:EditorView
                     DataContext="{Binding Editor}"
                     Grid.Row="1"
-                    Grid.Column="2"
-                    Grid.RowSpan="2"/>
+                    Grid.Column="2" Margin="0,0,-20,45" Grid.RowSpan="2"/>
 
-
-
-
-                <!-- Нижняя панель (тоже должно быть отдельным View) -->
-                <Border
+                <!-- BottomPanelView -->
+                <views:BottomPanelView
                     Grid.Row="2"
                     Grid.Column="2"
-                    CornerRadius="8"
-                    BorderBrush="Black"
-                    BorderThickness="2"
-                    Background="#ECECEC"
-                    Padding="10"
-                    Margin="0,30,0,-15">
-
-                    <StackPanel
-                        Orientation="Horizontal"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center">
-                            
-                        <Button
-                            Content="Создать"
-                            Width="120"
-                            Height="35"
-                            Margin="10,0"
-                            Command="{Binding CreateWorkspaceCommand}"/>
-
-                        <Button
-                            Content="Открыть"
-                            Width="120"
-                            Height="35"
-                            Margin="10,0"/>
-
-                        <Button
-                            Content="Сохранить"
-                            Width="120"
-                            Height="35"
-                            Margin="10,0"/>
-
-                        <Button
-                            Content="Экспортировать"
-                            Width="120"
-                            Height="35"
-                            BorderThickness="2"
-                            Margin="10,0"/>
-                        
-                    </StackPanel>
-                </Border>
+                    Margin="0,30,-20,-33"/>
             </Grid>
         </Border>
     </Grid>

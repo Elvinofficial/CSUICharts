@@ -9,14 +9,11 @@ namespace UICharts.Desktop.ViewModels
     public class BlockViewModel : BindableBase
     {
         private readonly BlockModel model;
-
         public BlockViewModel(BlockModel model)
         {
             this.model = model;
         }
-
         public BlockModel Model => model;
-
         public BlockType Type
         {
             get => model.Type;
@@ -29,7 +26,6 @@ namespace UICharts.Desktop.ViewModels
                 }
             }
         }
-
         public double X
         {
             get => model.X;
@@ -42,7 +38,6 @@ namespace UICharts.Desktop.ViewModels
                 }
             }
         }
-
         public double Y
         {
             get => model.Y;
@@ -56,6 +51,17 @@ namespace UICharts.Desktop.ViewModels
             }
         }
 
+        public double Width => Type switch
+        {
+            BlockType.InputOutput => 140,
+            _ => 120
+        };
+
+        public double Height => Type switch
+        {
+            BlockType.Decision => 80,
+            _ => 60
+        };
         public string Text
         {
             get => model.Text;
