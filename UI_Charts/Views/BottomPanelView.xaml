@@ -27,13 +27,16 @@
                 Content="Открыть"
                 Width="120"
                 Height="35"
-                Margin="10,0"/>
-
+                Margin="10,0"
+                Command="{Binding DataContext.LoadProjectCommand,
+              RelativeSource={RelativeSource AncestorType=Window}}"/>
             <Button
                 Content="Сохранить"
                 Width="120"
                 Height="35"
-                Margin="10,0"/>
+                Margin="10,0"
+                Command="{Binding DataContext.SaveProjectCommand,
+              RelativeSource={RelativeSource AncestorType=Window}}"/>
 
             <Button
                 Content="Экспортировать"

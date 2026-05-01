@@ -26,6 +26,8 @@ namespace UICharts.Desktop.ViewModels
         public BlockViewModel From { get; }
         public BlockViewModel To { get; }
 
+        public ConnectionModel Model => model;
+
         public double X1 => GetEdgePoint(From, To).X;
         public double Y1 => GetEdgePoint(From, To).Y;
 
@@ -56,16 +58,7 @@ namespace UICharts.Desktop.ViewModels
 };
 
         private double AngleRadians => Math.Atan2(Y2 - Y1, X2 - X1);
-        //public double Angle
-        //{
-        //    get
-        //    {
-        //        var dx = X2 - X1;
-        //        var dy = Y2 - Y1;
-        //        return Math.Atan2(dy, dx) * 180 / Math.PI;
-        //    }
-        //}
-
+        
         private Point GetEdgePoint(BlockViewModel from, BlockViewModel to)
         {
             double dx = to.X - from.X;
@@ -96,7 +89,6 @@ namespace UICharts.Desktop.ViewModels
             RaisePropertyChanged(nameof(Y1));
             RaisePropertyChanged(nameof(X2));
             RaisePropertyChanged(nameof(Y2));
-            //RaisePropertyChanged(nameof(Angle));
             RaisePropertyChanged(nameof(ArrowPoints));
         }
     }

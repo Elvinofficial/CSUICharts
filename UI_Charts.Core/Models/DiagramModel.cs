@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Text;
-
-namespace UICharts.Core.Models
+﻿namespace UICharts.Core.Models
 {
     public class DiagramModel
     {
-        public required string Name { get; set; }
+        public required string Name { get; set; } = "Новая диаграмма";
 
         public List<BlockModel> Blocks { get; set; } = new();
         public List<ConnectionModel> Connections { get; set; } = new();

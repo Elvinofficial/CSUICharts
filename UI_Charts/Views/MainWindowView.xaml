@@ -14,7 +14,12 @@
     prism:ViewModelLocator.AutoWireViewModel="True"
     d:DataContext="{d:DesignInstance vm:MainWindowViewModel, IsDesignTimeCreatable=False}"
     >
-
+    <!-- Удаление -->
+    <Window.InputBindings>
+        <KeyBinding Key="Delete"
+                    Command="{Binding Editor.DeleteSelectedCommand}" />
+    </Window.InputBindings>
+    
     <Grid 
         Background="#F3F3F3"
         Margin="0,0,0,-6">
@@ -63,6 +68,8 @@
                     Grid.Row="2"
                     Grid.Column="2"
                     Margin="0,30,-20,-33"/>
+                
+                
             </Grid>
         </Border>
     </Grid>

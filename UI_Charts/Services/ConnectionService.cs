@@ -31,8 +31,8 @@ namespace UICharts.Desktop.Services
 
             var model = new ConnectionModel
             {
-                From = connectionStartBlock.Model,
-                To = block.Model
+                FromBlockId = connectionStartBlock.Model.Id,
+                ToBlockId = block.Model.Id
             };
 
             var vm = new ConnectionViewModel(

@@ -14,6 +14,8 @@ namespace UICharts.Desktop.ViewModels
             this.model = model;
         }
         public BlockModel Model => model;
+
+        public Guid Id => model.Id;
         public BlockType Type
         {
             get => model.Type;

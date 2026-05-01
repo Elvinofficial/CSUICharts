@@ -16,6 +16,8 @@ namespace UICharts.Desktop.ViewModels
 
         private readonly SelectionService selectionService = new();
 
+        private readonly DeleteService deleteService = new();
+
         private DiagramModel? currentDiagram;
         public DiagramModel? CurrentDiagram
         {
@@ -63,12 +65,15 @@ namespace UICharts.Desktop.ViewModels
         public DelegateCommand<Point?> BlockMouseMoveCommand { get; }
         public DelegateCommand BlockMouseUpCommand { get; }
         public DelegateCommand ToggleConnectionModeCommand { get; }
+
+        public DelegateCommand DeleteSelectedCommand { get; }
         public EditorViewModel()
         {
             CanvasClickCommand = new DelegateCommand<System.Windows.Point?>(OnCanvasClick);
             SelectBlockCommand = new DelegateCommand<BlockViewModel>(OnSelectBlock);
             BeginEditBlockCommand = new DelegateCommand<BlockViewModel>(OnBeginEditBlock);
             EndEditBlockCommand = new DelegateCommand<BlockViewModel>(OnEndEditBlock);
+            DeleteSelectedCommand = new DelegateCommand(OnDeleteSelected);
 
             ToggleConnectionModeCommand = new DelegateCommand(() =>
             {
@@ -188,6 +193,17 @@ namespace UICharts.Desktop.ViewModels
         private void OnBlockMouseUp()
         {
             dragService.EndDrag();
+        }
+
+        private void OnDeleteSelected()
+        {
+
+            if (SelectedBlock == null)
+                return;
+
+            deleteService.DeleteBlock(CurrentDiagram, Blocks, Connections, SelectedBlock);
+
+            SelectedBlock = null;
         }
     }
 }

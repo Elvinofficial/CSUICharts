@@ -17,22 +17,22 @@ namespace UICharts.Desktop.Services
             if (diagram == null)
                 return;
 
-            var map = new Dictionary<BlockModel, BlockViewModel>();
+            var map = new Dictionary<Guid, BlockViewModel>();
 
             foreach (var blockModel in diagram.Blocks)
             {
                 var blockVm = new BlockViewModel(blockModel);
                 blocks.Add(blockVm);
 
-                map[blockModel] = blockVm;
+                map[blockModel.Id] = blockVm;
             }
 
             foreach (var connectionModel in diagram.Connections)
             {
-                if (!map.TryGetValue(connectionModel.From, out var fromVm))
+                if (!map.TryGetValue(connectionModel.FromBlockId, out var fromVm))
                     continue;
 
-                if (!map.TryGetValue(connectionModel.To, out var toVm))
+                if (!map.TryGetValue(connectionModel.ToBlockId, out var toVm))
                     continue;
 
                 var connectionVm = new ConnectionViewModel(

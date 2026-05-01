@@ -10,6 +10,8 @@ namespace UICharts.Core.Models
     public class BlockModel 
     {
        public BlockType Type { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
+
         public double X { get; set; }
         public double Y { get; set; }
 

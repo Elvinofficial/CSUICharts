@@ -14,6 +14,7 @@
              d:DesignWidth="800">
              <!--d:DataContext="{d:DesignInstance Type=viewmodels:EditorViewModel}"-->
     
+    
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -29,6 +30,7 @@
             Padding="10">
 
         <Canvas x:Name="EditorCanvas"
+                
                 Background="#F8F8F8"
                 behaviors:EditorCanvasBehavior.CanvasClickCommand="{Binding CanvasClickCommand}">
             
