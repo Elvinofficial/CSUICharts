@@ -17,5 +17,11 @@ namespace UICharts
         {
             containerRegistry.Register<IProjectService, ProjectService>();
         }
+
+        // добавить модуль справки (типа подсказок)
+        protected override void InitializeModules() // не точно это
+        {
+            base.InitializeModules(); // вместо baase наш модуль
+        }
     }
 }

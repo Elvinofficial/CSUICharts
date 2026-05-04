@@ -3,7 +3,7 @@ using UICharts.Desktop.ViewModels;
 
 namespace UICharts.Desktop.Services
 {
-    public class BlockDragService
+    public class BlockDragService // интерфейсы хотелось бы
     {
         private BlockViewModel? draggedBlock;
         private Point startMouse;
