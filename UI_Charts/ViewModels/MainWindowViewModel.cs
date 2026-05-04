@@ -4,18 +4,20 @@ using System.IO;
 using System.Windows;
 using UICharts.Core.Interfaces;
 using UICharts.Core.Models;
+using UICharts.Desktop.Services;
 
 namespace UICharts.Desktop.ViewModels
 {
     public class MainWindowViewModel : BindableBase
     {
+        private readonly PngExportService pngExportService = new();
         public ObservableCollection<WorkspaceItemModel> Workspaces { get; } = new();
 
         private readonly IProjectService projectService;
         public DelegateCommand SaveProjectCommand { get; }
         public DelegateCommand LoadProjectCommand { get; }
         public EditorViewModel Editor { get; }
-
+        public DelegateCommand<object> ExportPngCommand { get; }
         public ToolboxViewModel Toolbox { get; }
 
         private WorkspaceItemModel selectedWorkspace;
@@ -41,6 +43,7 @@ namespace UICharts.Desktop.ViewModels
             CreateWorkspaceCommand = new DelegateCommand(OnCreateWorkspace);
             SaveProjectCommand = new DelegateCommand(SaveProject);
             LoadProjectCommand = new DelegateCommand(LoadProject);
+            ExportPngCommand = new DelegateCommand<object>(ExportPng);
             Toolbox = new ToolboxViewModel();
             Editor = new EditorViewModel();
             this.projectService = projectService;
@@ -122,5 +125,37 @@ namespace UICharts.Desktop.ViewModels
             Workspaces.Add(workspace);
             SelectedWorkspace = workspace;
         }
+
+        private void ExportPng(object parameter)
+        {
+            if (parameter is not Window window)
+            {
+                MessageBox.Show("Не удалось получить область для экспорта.");
+                return;
+            }
+            var editorArea = window.FindName("EditorArea") as FrameworkElement;
+
+            if (editorArea == null)
+            {
+                MessageBox.Show("Не удалось найти рабочее поле для экспорта.");
+                return;
+            }
+            var dialog = new SaveFileDialog
+            {
+                Title = "Экспортировать в PNG",
+                Filter = "PNG изображение (*.png)|*.png",
+                FileName = "diagram.png",
+                DefaultExt = ".png",
+                AddExtension = true
+            };
+
+            if (dialog.ShowDialog() != true)
+                return;
+
+            pngExportService.ExportToPng(editorArea, dialog.FileName);
+
+            MessageBox.Show("Диаграмма экспортирована в PNG.");
+        }
+
     }
 }

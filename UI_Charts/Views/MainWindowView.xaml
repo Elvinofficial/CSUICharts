@@ -8,6 +8,7 @@
     xmlns:views="clr-namespace:UICharts.Desktop.Views"
     xmlns:prism="http://prismlibrary.com/"
     mc:Ignorable="d"
+    Icon="/Resources/Icons/app.ico"
     Title="Редактор блок-схем"
     Height="720"
     Width="1250"
@@ -59,6 +60,7 @@
 
                 <!-- EditorView -->
                 <views:EditorView
+                    x:Name="EditorArea"
                     DataContext="{Binding Editor}"
                     Grid.Row="1"
                     Grid.Column="2" Margin="0,0,-20,45" Grid.RowSpan="2"/>
