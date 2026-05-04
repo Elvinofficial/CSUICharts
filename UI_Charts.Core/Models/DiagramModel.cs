@@ -4,8 +4,8 @@
     {
         public required string Name { get; set; } = "Новая диаграмма";
 
-        public List<BlockModel> Blocks { get; set; } = new();
-        public List<ConnectionModel> Connections { get; set; } = new();
+        public List<BlockModel> Blocks { get; set; } = [];
+        public List<ConnectionModel> Connections { get; set; } = [];
 
     }
 }

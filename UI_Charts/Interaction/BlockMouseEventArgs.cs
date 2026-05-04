@@ -3,23 +3,15 @@ using UICharts.Desktop.ViewModels;
 
 namespace UICharts.Desktop.Interaction
 {
-    public class BlockMouseEventArgs
+    public class BlockMouseEventArgs(
+        BlockViewModel block,
+        Point mousePosition,
+        int clickCount,
+        bool isShiftPressed)
     {
-        public BlockMouseEventArgs(
-            BlockViewModel block,
-            Point mousePosition,
-            int clickCount,
-            bool isShiftPressed)
-        {
-            Block = block;
-            MousePosition = mousePosition;
-            ClickCount = clickCount;
-            IsShiftPressed = isShiftPressed;
-        }
-
-        public BlockViewModel Block { get; }
-        public Point MousePosition { get; }
-        public int ClickCount { get; }
-        public bool IsShiftPressed { get; }
+        public BlockViewModel Block { get; } = block;
+        public Point MousePosition { get; } = mousePosition;
+        public int ClickCount { get; } = clickCount;
+        public bool IsShiftPressed { get; } = isShiftPressed;
     }
 }

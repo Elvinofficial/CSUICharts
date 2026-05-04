@@ -31,7 +31,7 @@
 
         <Canvas x:Name="EditorCanvas"
                 
-                Background="#F8F8F8"
+                Background="#ECECEC"
                 behaviors:EditorCanvasBehavior.CanvasClickCommand="{Binding CanvasClickCommand}">
             
             <!-- Линии снизу -->

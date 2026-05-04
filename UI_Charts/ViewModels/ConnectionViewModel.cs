@@ -51,11 +51,11 @@ namespace UICharts.Desktop.ViewModels
             Y2 - UnitY * ArrowLength - UnitX * ArrowWidth);
 
         public PointCollection ArrowPoints => new PointCollection
-{
-    ArrowTip,
-    ArrowBase1,
-    ArrowBase2
-};
+        {
+            ArrowTip,
+            ArrowBase1,
+            ArrowBase2
+        };
 
         private double AngleRadians => Math.Atan2(Y2 - Y1, X2 - X1);
         
