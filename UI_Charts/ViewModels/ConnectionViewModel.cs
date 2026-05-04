@@ -58,29 +58,34 @@ namespace UICharts.Desktop.ViewModels
         };
 
         private double AngleRadians => Math.Atan2(Y2 - Y1, X2 - X1);
-        
+
         private Point GetEdgePoint(BlockViewModel from, BlockViewModel to)
         {
-            double dx = to.X - from.X;
-            double dy = to.Y - from.Y;
+            var fromCenter = new Point(
+                from.X + from.Width / 2,
+                from.Y + from.Height / 2);
+
+            var toCenter = new Point(
+                to.X + to.Width / 2,
+                to.Y + to.Height / 2);
+
+            double dx = toCenter.X - fromCenter.X;
+            double dy = toCenter.Y - fromCenter.Y;
+
+            if (dx == 0 && dy == 0)
+                return fromCenter;
 
             double halfW = from.Width / 2;
             double halfH = from.Height / 2;
 
-            if (Math.Abs(dx) > Math.Abs(dy))
-            {
+            double scaleX = dx == 0 ? double.PositiveInfinity : halfW / Math.Abs(dx);
+            double scaleY = dy == 0 ? double.PositiveInfinity : halfH / Math.Abs(dy);
 
-                return dx > 0
-                    ? new Point(from.X + halfW, from.Y + halfH)
-                    : new Point(from.X, from.Y + halfH);
-            }
-            else
-            {
+            double scale = Math.Min(scaleX, scaleY);
 
-                return dy > 0
-                    ? new Point(from.X + halfW, from.Y + from.Height)
-                    : new Point(from.X + halfW, from.Y);
-            }
+            return new Point(
+                fromCenter.X + dx * scale,
+                fromCenter.Y + dy * scale);
         }
 
         private void Update()
@@ -89,6 +94,9 @@ namespace UICharts.Desktop.ViewModels
             RaisePropertyChanged(nameof(Y1));
             RaisePropertyChanged(nameof(X2));
             RaisePropertyChanged(nameof(Y2));
+            RaisePropertyChanged(nameof(ArrowTip));
+            RaisePropertyChanged(nameof(ArrowBase1));
+            RaisePropertyChanged(nameof(ArrowBase2));
             RaisePropertyChanged(nameof(ArrowPoints));
         }
     }

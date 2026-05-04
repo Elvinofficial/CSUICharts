@@ -55,7 +55,7 @@ namespace UICharts.Desktop.ViewModels
                 }
             };
 
-            // OnCreateWorkspace();
+            OnCreateWorkspace();
         }
 
         private void OnCreateWorkspace()
