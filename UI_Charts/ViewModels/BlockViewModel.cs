@@ -2,8 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 using Prism.Mvvm;
+using System.Windows;
 using UICharts.Core.Models;
 using UICharts.Core.Enums;
+using UICharts.Core.Figures;
+using UICharts.Core.Factorys;
+using UICharts.Core.Interfaces;
 namespace UICharts.Desktop.ViewModels
 {
     public class BlockViewModel : BindableBase
@@ -25,9 +29,17 @@ namespace UICharts.Desktop.ViewModels
                 {
                     model.Type = value;
                     RaisePropertyChanged();
+                    RaisePropertyChanged(nameof(Width));
+                    RaisePropertyChanged(nameof(Height));
+                    RaisePropertyChanged(nameof(ConnectionPoints));
                 }
             }
         }
+
+        private static readonly BlockFigureFactory figureFactory = new();
+
+        private IBlockFigure Figure => figureFactory.GetFigure(Type);
+
         public double X
         {
             get => model.X;
@@ -37,6 +49,7 @@ namespace UICharts.Desktop.ViewModels
                 {
                     model.X = value;
                     RaisePropertyChanged();
+                    RaisePropertyChanged(nameof(ConnectionPoints));
                 }
             }
         }
@@ -49,21 +62,14 @@ namespace UICharts.Desktop.ViewModels
                 {
                     model.Y = value;
                     RaisePropertyChanged();
+                    RaisePropertyChanged(nameof(ConnectionPoints));
                 }
             }
         }
 
-        public double Width => Type switch
-        {
-            BlockType.InputOutput => 140,
-            _ => 120
-        };
+        public double Width => Figure.DefaultWidth;
+        public double Height => Figure.DefaultHeight;
 
-        public double Height => Type switch
-        {
-            BlockType.Decision => 80,
-            _ => 60
-        };
         public string Text
         {
             get => model.Text;
@@ -89,5 +95,14 @@ namespace UICharts.Desktop.ViewModels
             get => isEditing;
             set => SetProperty(ref isEditing, value);
         }
+
+
+        /// <summary>
+        /// Возвращает абсолютные координаты точек подключения блока, вычисляемые на основе его типа и размеров
+        /// </summary>
+        public IEnumerable<Point> ConnectionPoints =>
+            Figure.ConnectionPoints.Select(point => new Point(
+                X + Width * point.XRatio,
+                Y + Height * point.YRatio));
     }
 }

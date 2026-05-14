@@ -28,11 +28,11 @@ namespace UICharts.Desktop.ViewModels
 
         public ConnectionModel Model => model;
 
-        public double X1 => GetEdgePoint(From, To).X;
-        public double Y1 => GetEdgePoint(From, To).Y;
+        public double X1 => GetNeatestConnectionPoint(From, To).X;
+        public double Y1 => GetNeatestConnectionPoint(From, To).Y;
 
-        public double X2 => GetEdgePoint(To, From).X;
-        public double Y2 => GetEdgePoint(To, From).Y;
+        public double X2 => GetNeatestConnectionPoint(To, From).X;
+        public double Y2 => GetNeatestConnectionPoint(To, From).Y;
 
         private double UnitX => Math.Cos(AngleRadians);
         private double UnitY => Math.Sin(AngleRadians);
@@ -59,33 +59,25 @@ namespace UICharts.Desktop.ViewModels
 
         private double AngleRadians => Math.Atan2(Y2 - Y1, X2 - X1);
 
-        private Point GetEdgePoint(BlockViewModel from, BlockViewModel to)
+        private Point GetNeatestConnectionPoint (
+            BlockViewModel from,
+            BlockViewModel to)
         {
-            var fromCenter = new Point(
-                from.X + from.Width / 2,
-                from.Y + from.Height / 2);
-
-            var toCenter = new Point(
+            var targetCentter = new Point(
                 to.X + to.Width / 2,
                 to.Y + to.Height / 2);
 
-            double dx = toCenter.X - fromCenter.X;
-            double dy = toCenter.Y - fromCenter.Y;
+            return from.ConnectionPoints
+                .OrderBy(point => GetDistance(point, targetCentter))
+                .First();
+        }
 
-            if (dx == 0 && dy == 0)
-                return fromCenter;
+        private double GetDistance(Point a, Point b)
+        {
+            var dx = a.X - b.X;
+            var dy = a.Y - b.Y;
 
-            double halfW = from.Width / 2;
-            double halfH = from.Height / 2;
-
-            double scaleX = dx == 0 ? double.PositiveInfinity : halfW / Math.Abs(dx);
-            double scaleY = dy == 0 ? double.PositiveInfinity : halfH / Math.Abs(dy);
-
-            double scale = Math.Min(scaleX, scaleY);
-
-            return new Point(
-                fromCenter.X + dx * scale,
-                fromCenter.Y + dy * scale);
+            return Math.Sqrt(dx * dx + dy * dy);
         }
 
         private void Update()
@@ -94,6 +86,7 @@ namespace UICharts.Desktop.ViewModels
             RaisePropertyChanged(nameof(Y1));
             RaisePropertyChanged(nameof(X2));
             RaisePropertyChanged(nameof(Y2));
+            
             RaisePropertyChanged(nameof(ArrowTip));
             RaisePropertyChanged(nameof(ArrowBase1));
             RaisePropertyChanged(nameof(ArrowBase2));

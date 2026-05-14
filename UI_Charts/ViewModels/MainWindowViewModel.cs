@@ -5,12 +5,13 @@ using System.Windows;
 using UICharts.Core.Interfaces;
 using UICharts.Core.Models;
 using UICharts.Desktop.Services;
+using UICharts.Desktop.Services.Interfaces;
 
 namespace UICharts.Desktop.ViewModels
 {
     public class MainWindowViewModel : BindableBase
     {
-        private readonly PngExportService pngExportService = new();
+        private readonly IPngExportService pngExportService;
         public ObservableCollection<WorkspaceItemModel> Workspaces { get; } = new();
 
         private readonly IProjectService projectService;
@@ -40,15 +41,18 @@ namespace UICharts.Desktop.ViewModels
 
         public MainWindowViewModel(
             IProjectService projectService,
-            EditorViewModel editorViewModel)
+            IPngExportService pngExportService,
+            EditorViewModel editorViewModel,
+            ToolboxViewModel toolboxViewModel)
         {
             CreateWorkspaceCommand = new DelegateCommand(OnCreateWorkspace);
             SaveProjectCommand = new DelegateCommand(SaveProject);
             LoadProjectCommand = new DelegateCommand(LoadProject);
             ExportPngCommand = new DelegateCommand<object>(ExportPng);
-            Toolbox = new ToolboxViewModel();
+            Toolbox = toolboxViewModel;
             Editor = editorViewModel;
             this.projectService = projectService;
+            this.pngExportService = pngExportService;
             Toolbox.PropertyChanged += (_, e) =>
             {
                 if (e.PropertyName == nameof(ToolboxViewModel.SelectedFigure))
