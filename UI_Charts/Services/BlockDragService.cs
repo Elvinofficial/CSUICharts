@@ -1,9 +1,9 @@
 ﻿using System.Windows;
+using UICharts.Desktop.Services.Interfaces;
 using UICharts.Desktop.ViewModels;
-
 namespace UICharts.Desktop.Services
 {
-    public class BlockDragService // интерфейсы хотелось бы
+    public class BlockDragService: IBlockDragService // интерфейсы хотелось бы
     {
         private BlockViewModel? draggedBlock;
         private Point startMouse;

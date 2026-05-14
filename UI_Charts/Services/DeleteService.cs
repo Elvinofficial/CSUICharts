@@ -1,8 +1,9 @@
 ﻿using System.Collections.ObjectModel;
 using UICharts.Core.Models;
 using UICharts.Desktop.ViewModels;
+using UICharts.Desktop.Services.Interfaces;
 
-public class DeleteService
+public class DeleteService : IDeleteService
 {
     public void DeleteBlock(
         DiagramModel diagram,

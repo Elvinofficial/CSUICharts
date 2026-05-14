@@ -3,20 +3,20 @@ using System.Windows;
 using UICharts.Core.Models;
 using UICharts.Desktop.Interaction;
 using UICharts.Desktop.Services;
+using UICharts.Desktop.Services.Interfaces;
 
 namespace UICharts.Desktop.ViewModels
 {
     public class EditorViewModel : BindableBase
     {
-        private readonly BlockDragService dragService = new();
+        private readonly IBlockDragService dragService;
 
-        private readonly ConnectionService connectionService = new();
+        private readonly IConnectionService connectionService;
 
-        private readonly DiagramMappingService mappingService = new();
+        private readonly IDiagramMappingService mappingService;
+        private readonly ISelectionService selectionService;
 
-        private readonly SelectionService selectionService = new();
-
-        private readonly DeleteService deleteService = new();
+        private readonly IDeleteService deleteService;
 
         private DiagramModel? currentDiagram;
         public DiagramModel? CurrentDiagram
@@ -67,8 +67,20 @@ namespace UICharts.Desktop.ViewModels
         public DelegateCommand ToggleConnectionModeCommand { get; }
 
         public DelegateCommand DeleteSelectedCommand { get; }
-        public EditorViewModel()
+        public EditorViewModel(
+            IBlockDragService dragService,
+            IConnectionService connectionService,
+            IDiagramMappingService mappingService,
+            ISelectionService selectionService,
+            IDeleteService deleteService
+            )
         {
+            this.dragService = dragService;
+            this.connectionService = connectionService;
+            this.mappingService = mappingService;
+            this.selectionService = selectionService;
+            this.deleteService = deleteService;
+
             CanvasClickCommand = new DelegateCommand<System.Windows.Point?>(OnCanvasClick);
             SelectBlockCommand = new DelegateCommand<BlockViewModel>(OnSelectBlock);
             BeginEditBlockCommand = new DelegateCommand<BlockViewModel>(OnBeginEditBlock);

@@ -5,10 +5,11 @@ using System.Text;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using UICharts.Desktop.Services.Interfaces;
 
 namespace UICharts.Desktop.Services
 {
-    public class PngExportService
+    public class PngExportService : IPngExportService
     {
         public void ExportToPng(FrameworkElement element, string filePath)
         {

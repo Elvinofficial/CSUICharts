@@ -1,9 +1,10 @@
 ﻿using System.Collections.ObjectModel;
+using UICharts.Desktop.Services.Interfaces;
 using UICharts.Desktop.ViewModels;
 
 namespace UICharts.Desktop.Services
 {
-    public class SelectionService
+    public class SelectionService : ISelectionService
     {
         public void ClearSelection(ObservableCollection<BlockViewModel> blocks)
         {

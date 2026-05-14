@@ -1,10 +1,11 @@
 ﻿using System.Collections.ObjectModel;
 using UICharts.Core.Models;
+using UICharts.Desktop.Services.Interfaces;
 using UICharts.Desktop.ViewModels;
 
 namespace UICharts.Desktop.Services
 {
-    public class DiagramMappingService
+    public class DiagramMappingService : IDiagramMappingService
     {
         public void Map(
             DiagramModel? diagram,

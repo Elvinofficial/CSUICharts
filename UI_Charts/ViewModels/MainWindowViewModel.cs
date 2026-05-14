@@ -38,14 +38,16 @@ namespace UICharts.Desktop.ViewModels
 
         private int workspaceCounter = 0;
 
-        public MainWindowViewModel(IProjectService projectService)
+        public MainWindowViewModel(
+            IProjectService projectService,
+            EditorViewModel editorViewModel)
         {
             CreateWorkspaceCommand = new DelegateCommand(OnCreateWorkspace);
             SaveProjectCommand = new DelegateCommand(SaveProject);
             LoadProjectCommand = new DelegateCommand(LoadProject);
             ExportPngCommand = new DelegateCommand<object>(ExportPng);
             Toolbox = new ToolboxViewModel();
-            Editor = new EditorViewModel();
+            Editor = editorViewModel;
             this.projectService = projectService;
             Toolbox.PropertyChanged += (_, e) =>
             {
