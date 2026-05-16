@@ -29,6 +29,11 @@ namespace UICharts.Desktop.ViewModels
 
         public ToolboxViewModel()
         {
+            Figures.Add(new FigureItemModel
+            {
+                Name = "Начало",
+                Type = Core.Enums.BlockType.Start
+            });
             Figures.Add(new FigureItemModel 
             { 
                 Name = "Процесс",
@@ -40,16 +45,33 @@ namespace UICharts.Desktop.ViewModels
                 Type = Core.Enums.BlockType.Decision
             
             });
-            Figures.Add(new FigureItemModel 
-            { 
-                Name = "Начало / конец", 
-                Type = Core.Enums.BlockType.StartEnd
-            
-            });
             Figures.Add(new FigureItemModel { 
                 Name = "Ввод / вывод",
                 Type = Core.Enums.BlockType.InputOutput
 
+            });
+            Figures.Add(new FigureItemModel
+            {
+                Name = "Цикл",
+                Type = Core.Enums.BlockType.Loop
+
+            });
+            Figures.Add(new FigureItemModel
+            {
+                Name = "Процедура",
+                Type = Core.Enums.BlockType.Procedure
+
+            });
+            Figures.Add(new FigureItemModel
+            {
+                Name = "Ссылка",
+                Type = Core.Enums.BlockType.Reference
+
+            });
+            Figures.Add(new FigureItemModel
+            {
+                Name = "Конец",
+                Type = Core.Enums.BlockType.End
             });
 
             SelectedFigure = Figures[0];

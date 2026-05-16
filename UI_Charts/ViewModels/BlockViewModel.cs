@@ -67,8 +67,35 @@ namespace UICharts.Desktop.ViewModels
             }
         }
 
-        public double Width => Figure.DefaultWidth;
-        public double Height => Figure.DefaultHeight;
+        public double Width
+        {
+            get => model.Width;
+            set
+            {
+                if (model.Width != value)
+                {
+                    model.Width = value;
+
+                    RaisePropertyChanged();
+                    RaisePropertyChanged(nameof(ConnectionPoints));
+                }
+            }
+        }
+
+        public double Height
+        {
+            get => model.Height;
+            set
+            {
+                if (model.Height != value)
+                {
+                    model.Height = value;
+
+                    RaisePropertyChanged();
+                    RaisePropertyChanged(nameof(ConnectionPoints));
+                }
+            }
+        }
 
         public string Text
         {

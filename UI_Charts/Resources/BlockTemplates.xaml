@@ -3,11 +3,13 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:enums="clr-namespace:UICharts.Core.Enums;assembly=UICharts.Core"
     xmlns:behaviors="clr-namespace:UICharts.Desktop.Behaviors">
+    
+    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
 
         <!-- Процесс -->
         <DataTemplate x:Key="ProcessTemplate">
-            <Grid Width="120"
-            Height="60"
+            <Grid Width="{Binding Width}"
+            Height="{Binding Height}"
             behaviors:BlockClickBehavior.InteractionCanvas="{Binding RelativeSource={RelativeSource AncestorType=Canvas}}"
             behaviors:BlockClickBehavior.MouseDownCommand="{Binding DataContext.BlockMouseDownCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
 
@@ -69,26 +71,38 @@
                         </Style>
                     </TextBox.Style>
                 </TextBox>
-            </Grid>
+
+                <Rectangle Width="10"
+               Height="10"
+               Fill="DodgerBlue"
+               HorizontalAlignment="Right"
+               VerticalAlignment="Bottom"
+               Cursor="SizeNWSE"
+               Visibility="{Binding IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}"
+               behaviors:BlockResizeBehavior.InteractionCanvas="{Binding ElementName=EditorCanvas}"
+               behaviors:BlockResizeBehavior.MouseDownCommand="{Binding DataContext.BlockResizeMouseDownCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+               behaviors:BlockResizeBehavior.MouseMoveCommand="{Binding DataContext.BlockResizeMouseMoveCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+               behaviors:BlockResizeBehavior.MouseUpCommand="{Binding DataContext.BlockResizeMouseUpCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+        </Grid>
         </DataTemplate>
 
         <!-- Решение -->
         <DataTemplate x:Key="DecisionTemplate">
-            <Grid Width="120"
-            Height="80"
-            behaviors:BlockClickBehavior.InteractionCanvas="{Binding ElementName=EditorCanvas}"
-behaviors:BlockClickBehavior.MouseDownCommand="{Binding DataContext.BlockMouseDownCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+        <Grid Width="{Binding Width}"
+          Height="{Binding Height}"
+          behaviors:BlockClickBehavior.InteractionCanvas="{Binding ElementName=EditorCanvas}"
+          behaviors:BlockClickBehavior.MouseDownCommand="{Binding DataContext.BlockMouseDownCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+          behaviors:BlockDragBehavior.InteractionCanvas="{Binding ElementName=EditorCanvas}"
+          behaviors:BlockDragBehavior.MouseMoveCommand="{Binding DataContext.BlockMouseMoveCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+          behaviors:BlockDragBehavior.MouseUpCommand="{Binding DataContext.BlockMouseUpCommand, RelativeSource={RelativeSource AncestorType=UserControl}}">
 
-behaviors:BlockDragBehavior.InteractionCanvas="{Binding ElementName=EditorCanvas}"
-behaviors:BlockDragBehavior.MouseMoveCommand="{Binding DataContext.BlockMouseMoveCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-behaviors:BlockDragBehavior.MouseUpCommand="{Binding DataContext.BlockMouseUpCommand, RelativeSource={RelativeSource AncestorType=UserControl}}">
+            <Viewbox Stretch="Fill">
                 <Polygon Points="60,0 120,40 60,80 0,40">
                     <Polygon.Style>
                         <Style TargetType="Polygon">
                             <Setter Property="Fill" Value="White"/>
                             <Setter Property="Stroke" Value="Black"/>
                             <Setter Property="StrokeThickness" Value="2"/>
-
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding IsSelected}" Value="True">
                                     <Setter Property="Fill" Value="#EAF3FF"/>
@@ -99,8 +113,9 @@ behaviors:BlockDragBehavior.MouseUpCommand="{Binding DataContext.BlockMouseUpCom
                         </Style>
                     </Polygon.Style>
                 </Polygon>
+            </Viewbox>
 
-                <TextBlock Text="{Binding Text}"
+            <TextBlock Text="{Binding Text}"
      HorizontalAlignment="Center"
      VerticalAlignment="Center"
      TextAlignment="Center"
@@ -137,91 +152,34 @@ behaviors:BlockDragBehavior.MouseUpCommand="{Binding DataContext.BlockMouseUpCom
                     </TextBox.Style>
                 </TextBox>
 
-
-            </Grid>
+                <Rectangle Width="10"
+            Height="10"
+            Fill="DodgerBlue"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom"
+            Margin="0,0,20,5"
+            Cursor="SizeNWSE"
+            Visibility="{Binding IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}"
+            behaviors:BlockResizeBehavior.InteractionCanvas="{Binding ElementName=EditorCanvas}"
+            behaviors:BlockResizeBehavior.MouseDownCommand="{Binding DataContext.BlockResizeMouseDownCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+            behaviors:BlockResizeBehavior.MouseMoveCommand="{Binding DataContext.BlockResizeMouseMoveCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+            behaviors:BlockResizeBehavior.MouseUpCommand="{Binding DataContext.BlockResizeMouseUpCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"/>  
+        </Grid>
         </DataTemplate>
 
         <!-- Начало / конец -->
         <DataTemplate x:Key="StartEndTemplate">
-            <Grid Width="120"
-            Height="60"
-            behaviors:BlockClickBehavior.InteractionCanvas="{Binding ElementName=EditorCanvas}"
-behaviors:BlockClickBehavior.MouseDownCommand="{Binding DataContext.BlockMouseDownCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+        <Grid Width="{Binding Width}"
+          Height="{Binding Height}"
+          behaviors:BlockClickBehavior.InteractionCanvas="{Binding ElementName=EditorCanvas}"
+          behaviors:BlockClickBehavior.MouseDownCommand="{Binding DataContext.BlockMouseDownCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+          behaviors:BlockDragBehavior.InteractionCanvas="{Binding ElementName=EditorCanvas}"
+          behaviors:BlockDragBehavior.MouseMoveCommand="{Binding DataContext.BlockMouseMoveCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+          behaviors:BlockDragBehavior.MouseUpCommand="{Binding DataContext.BlockMouseUpCommand, RelativeSource={RelativeSource AncestorType=UserControl}}">
 
-behaviors:BlockDragBehavior.InteractionCanvas="{Binding ElementName=EditorCanvas}"
-behaviors:BlockDragBehavior.MouseMoveCommand="{Binding DataContext.BlockMouseMoveCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-behaviors:BlockDragBehavior.MouseUpCommand="{Binding DataContext.BlockMouseUpCommand, RelativeSource={RelativeSource AncestorType=UserControl}}">
-                <Ellipse>
-                    <Ellipse.Style>
-                        <Style TargetType="Ellipse">
-                            <Setter Property="Fill" Value="White"/>
-                            <Setter Property="Stroke" Value="Black"/>
-                            <Setter Property="StrokeThickness" Value="2"/>
-
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsSelected}" Value="True">
-                                    <Setter Property="Fill" Value="#EAF3FF"/>
-                                    <Setter Property="Stroke" Value="DodgerBlue"/>
-                                    <Setter Property="StrokeThickness" Value="3"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Ellipse.Style>
-                </Ellipse>
-
-                <TextBlock Text="{Binding Text}"
-     HorizontalAlignment="Center"
-     VerticalAlignment="Center"
-     TextAlignment="Center"
-     TextWrapping="Wrap">
-                    <TextBlock.Style>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="Visibility" Value="Visible"/>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsEditing}" Value="True">
-                                    <Setter Property="Visibility" Value="Collapsed"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TextBlock.Style>
-                </TextBlock>
-
-                <TextBox Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}"
-   HorizontalAlignment="Stretch"
-   VerticalAlignment="Center"
-   TextAlignment="Center"
-   TextWrapping="Wrap"
-   behaviors:EditTextBoxBehavior.EndEditCommand=
-   "{Binding DataContext.EndEditBlockCommand,
-    RelativeSource={RelativeSource AncestorType=UserControl}}">
-                    <TextBox.Style>
-                        <Style TargetType="TextBox">
-                            <Setter Property="Visibility" Value="Collapsed"/>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsEditing}" Value="True">
-                                    <Setter Property="Visibility" Value="Visible"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TextBox.Style>
-                </TextBox>
-
-            </Grid>
-        </DataTemplate>
-
-        <!-- Ввод / вывод -->
-        <DataTemplate x:Key="InputOutputTemplate">
-        <Grid Width="140"
-            Height="60"
-            behaviors:BlockClickBehavior.InteractionCanvas="{Binding ElementName=EditorCanvas}"
-behaviors:BlockClickBehavior.MouseDownCommand="{Binding DataContext.BlockMouseDownCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-
-behaviors:BlockDragBehavior.InteractionCanvas="{Binding ElementName=EditorCanvas}"
-behaviors:BlockDragBehavior.MouseMoveCommand="{Binding DataContext.BlockMouseMoveCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-behaviors:BlockDragBehavior.MouseUpCommand="{Binding DataContext.BlockMouseUpCommand, RelativeSource={RelativeSource AncestorType=UserControl}}">
-            <Polygon Points="20,0 140,0 120,60 0,60">
-                <Polygon.Style>
-                    <Style TargetType="Polygon">
+            <Ellipse>
+                <Ellipse.Style>
+                    <Style TargetType="Ellipse">
                         <Setter Property="Fill" Value="White"/>
                         <Setter Property="Stroke" Value="Black"/>
                         <Setter Property="StrokeThickness" Value="2"/>
@@ -234,8 +192,300 @@ behaviors:BlockDragBehavior.MouseUpCommand="{Binding DataContext.BlockMouseUpCom
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
-                </Polygon.Style>
-            </Polygon>
+                </Ellipse.Style>
+            </Ellipse>
+
+            <TextBlock Text="{Binding Text}"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   TextAlignment="Center"
+                   TextWrapping="Wrap">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Visibility" Value="Visible"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+
+            <TextBox Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}"
+                 HorizontalAlignment="Stretch"
+                 VerticalAlignment="Center"
+                 TextAlignment="Center"
+                 TextWrapping="Wrap"
+                 behaviors:EditTextBoxBehavior.EndEditCommand="{Binding DataContext.EndEditBlockCommand, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                <TextBox.Style>
+                    <Style TargetType="TextBox">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBox.Style>
+            </TextBox>
+
+            <Rectangle Width="10"
+                Height="10"
+                Fill="DodgerBlue"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                Cursor="SizeNWSE"
+                Visibility="{Binding IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}"
+                behaviors:BlockResizeBehavior.InteractionCanvas="{Binding ElementName=EditorCanvas}"
+                behaviors:BlockResizeBehavior.MouseDownCommand="{Binding DataContext.BlockResizeMouseDownCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                behaviors:BlockResizeBehavior.MouseMoveCommand="{Binding DataContext.BlockResizeMouseMoveCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                behaviors:BlockResizeBehavior.MouseUpCommand="{Binding DataContext.BlockResizeMouseUpCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+        </Grid>
+    </DataTemplate>
+
+        <!-- Ссылка -->
+        <DataTemplate x:Key="ReferenceTemplate">
+        <Grid Width="{Binding Width}"
+              Height="{Binding Height}"
+              behaviors:BlockClickBehavior.InteractionCanvas="{Binding ElementName=EditorCanvas}"
+              behaviors:BlockClickBehavior.MouseDownCommand="{Binding DataContext.BlockMouseDownCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+              behaviors:BlockDragBehavior.InteractionCanvas="{Binding ElementName=EditorCanvas}"
+              behaviors:BlockDragBehavior.MouseMoveCommand="{Binding DataContext.BlockMouseMoveCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+              behaviors:BlockDragBehavior.MouseUpCommand="{Binding DataContext.BlockMouseUpCommand, RelativeSource={RelativeSource AncestorType=UserControl}}">
+
+            <Ellipse>
+                <Ellipse.Style>
+                    <Style TargetType="Ellipse">
+                        <Setter Property="Fill" Value="White"/>
+                        <Setter Property="Stroke" Value="Black"/>
+                        <Setter Property="StrokeThickness" Value="2"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                <Setter Property="Fill" Value="#EAF3FF"/>
+                                <Setter Property="Stroke" Value="DodgerBlue"/>
+                                <Setter Property="StrokeThickness" Value="3"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Ellipse.Style>
+            </Ellipse>
+
+            <TextBlock Text="{Binding Text}"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       TextAlignment="Center"
+                       TextWrapping="Wrap"/>
+
+            <TextBox Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}"
+                     HorizontalAlignment="Stretch"
+                     VerticalAlignment="Center"
+                     TextAlignment="Center"
+                     TextWrapping="Wrap"
+                     behaviors:EditTextBoxBehavior.EndEditCommand="{Binding DataContext.EndEditBlockCommand, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                <TextBox.Style>
+                    <Style TargetType="TextBox">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBox.Style>
+            </TextBox>
+
+            <Rectangle Width="10"
+                    Height="10"
+                    Fill="DodgerBlue"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    Cursor="SizeNWSE"
+                    Visibility="{Binding IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    behaviors:BlockResizeBehavior.InteractionCanvas="{Binding ElementName=EditorCanvas}"
+                    behaviors:BlockResizeBehavior.MouseDownCommand="{Binding DataContext.BlockResizeMouseDownCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                    behaviors:BlockResizeBehavior.MouseMoveCommand="{Binding DataContext.BlockResizeMouseMoveCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                    behaviors:BlockResizeBehavior.MouseUpCommand="{Binding DataContext.BlockResizeMouseUpCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+        </Grid>
+    </DataTemplate>
+
+         <!-- Процедура --> 
+         <DataTemplate x:Key="ProcedureTemplate">
+        <Grid Width="{Binding Width}"
+          Height="{Binding Height}"
+          behaviors:BlockClickBehavior.InteractionCanvas="{Binding ElementName=EditorCanvas}"
+          behaviors:BlockClickBehavior.MouseDownCommand="{Binding DataContext.BlockMouseDownCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+          behaviors:BlockDragBehavior.InteractionCanvas="{Binding ElementName=EditorCanvas}"
+          behaviors:BlockDragBehavior.MouseMoveCommand="{Binding DataContext.BlockMouseMoveCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+          behaviors:BlockDragBehavior.MouseUpCommand="{Binding DataContext.BlockMouseUpCommand, RelativeSource={RelativeSource AncestorType=UserControl}}">
+
+            <Rectangle>
+                <Rectangle.Style>
+                    <Style TargetType="Rectangle">
+                        <Setter Property="Fill" Value="White"/>
+                        <Setter Property="Stroke" Value="Black"/>
+                        <Setter Property="StrokeThickness" Value="2"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                <Setter Property="Fill" Value="#EAF3FF"/>
+                                <Setter Property="Stroke" Value="DodgerBlue"/>
+                                <Setter Property="StrokeThickness" Value="3"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Rectangle.Style>
+            </Rectangle>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="15"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="15"/>
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0"
+            BorderBrush="Black"
+            BorderThickness="0,0,2,0"/>
+
+                <Border Grid.Column="2"
+            BorderBrush="Black"
+            BorderThickness="2,0,0,0"/>
+            </Grid>
+
+            <TextBlock Text="{Binding Text}"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   TextAlignment="Center"
+                   TextWrapping="Wrap"/>
+
+            <TextBox Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}"
+                 HorizontalAlignment="Stretch"
+                 VerticalAlignment="Center"
+                 TextAlignment="Center"
+                 TextWrapping="Wrap"
+                 behaviors:EditTextBoxBehavior.EndEditCommand="{Binding DataContext.EndEditBlockCommand, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                <TextBox.Style>
+                    <Style TargetType="TextBox">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBox.Style>
+            </TextBox>
+
+            <Rectangle Width="10"
+                Height="10"
+                Fill="DodgerBlue"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                Cursor="SizeNWSE"
+                Visibility="{Binding IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}"
+                behaviors:BlockResizeBehavior.InteractionCanvas="{Binding ElementName=EditorCanvas}"
+                behaviors:BlockResizeBehavior.MouseDownCommand="{Binding DataContext.BlockResizeMouseDownCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                behaviors:BlockResizeBehavior.MouseMoveCommand="{Binding DataContext.BlockResizeMouseMoveCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                behaviors:BlockResizeBehavior.MouseUpCommand="{Binding DataContext.BlockResizeMouseUpCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+        </Grid>
+    </DataTemplate>
+
+    <!-- Цикл -->
+    <DataTemplate x:Key="LoopTemplate">
+        <Grid Width="{Binding Width}"
+          Height="{Binding Height}"
+          behaviors:BlockClickBehavior.InteractionCanvas="{Binding ElementName=EditorCanvas}"
+          behaviors:BlockClickBehavior.MouseDownCommand="{Binding DataContext.BlockMouseDownCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+          behaviors:BlockDragBehavior.InteractionCanvas="{Binding ElementName=EditorCanvas}"
+          behaviors:BlockDragBehavior.MouseMoveCommand="{Binding DataContext.BlockMouseMoveCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+          behaviors:BlockDragBehavior.MouseUpCommand="{Binding DataContext.BlockMouseUpCommand, RelativeSource={RelativeSource AncestorType=UserControl}}">
+
+            <Viewbox Stretch="Fill">
+                <Polygon Points="20,0 120,0 140,35 120,70 20,70 0,35">
+                    <Polygon.Style>
+                        <Style TargetType="Polygon">
+                            <Setter Property="Fill" Value="White"/>
+                            <Setter Property="Stroke" Value="Black"/>
+                            <Setter Property="StrokeThickness" Value="2"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                    <Setter Property="Fill" Value="#EAF3FF"/>
+                                    <Setter Property="Stroke" Value="DodgerBlue"/>
+                                    <Setter Property="StrokeThickness" Value="3"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Polygon.Style>
+                </Polygon>
+            </Viewbox>
+
+            <TextBlock Text="{Binding Text}"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   TextAlignment="Center"
+                   TextWrapping="Wrap"/>
+
+            <TextBox Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}"
+                 HorizontalAlignment="Stretch"
+                 VerticalAlignment="Center"
+                 TextAlignment="Center"
+                 TextWrapping="Wrap"
+                 behaviors:EditTextBoxBehavior.EndEditCommand="{Binding DataContext.EndEditBlockCommand, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                <TextBox.Style>
+                    <Style TargetType="TextBox">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBox.Style>
+            </TextBox>
+
+            <Rectangle Width="10"
+                Height="10"
+                Fill="DodgerBlue"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                Cursor="SizeNWSE"
+                Visibility="{Binding IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}"
+                behaviors:BlockResizeBehavior.InteractionCanvas="{Binding ElementName=EditorCanvas}"
+                behaviors:BlockResizeBehavior.MouseDownCommand="{Binding DataContext.BlockResizeMouseDownCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                behaviors:BlockResizeBehavior.MouseMoveCommand="{Binding DataContext.BlockResizeMouseMoveCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                behaviors:BlockResizeBehavior.MouseUpCommand="{Binding DataContext.BlockResizeMouseUpCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+        </Grid>
+    </DataTemplate>
+
+    <!-- Ввод / вывод -->
+        <DataTemplate x:Key="InputOutputTemplate">
+        <Grid Width="{Binding Width}"
+            Height="{Binding Height}"
+            behaviors:BlockClickBehavior.InteractionCanvas="{Binding ElementName=EditorCanvas}"
+            behaviors:BlockClickBehavior.MouseDownCommand="{Binding DataContext.BlockMouseDownCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+
+            behaviors:BlockDragBehavior.InteractionCanvas="{Binding ElementName=EditorCanvas}"
+            behaviors:BlockDragBehavior.MouseMoveCommand="{Binding DataContext.BlockMouseMoveCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+            behaviors:BlockDragBehavior.MouseUpCommand="{Binding DataContext.BlockMouseUpCommand, RelativeSource={RelativeSource AncestorType=UserControl}}">
+            
+            <Viewbox Stretch="Fill">
+                <Polygon Points="22,2 138,2 118,58 2,58">
+                    <Polygon.Style>
+                        <Style TargetType="Polygon">
+                            <Setter Property="Fill" Value="White"/>
+                            <Setter Property="Stroke" Value="Black"/>
+                            <Setter Property="StrokeThickness" Value="2"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                    <Setter Property="Fill" Value="#EAF3FF"/>
+                                    <Setter Property="Stroke" Value="DodgerBlue"/>
+                                    <Setter Property="StrokeThickness" Value="3"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Polygon.Style>
+                </Polygon>
+            </Viewbox>
 
             <TextBlock Text="{Binding Text}"
      HorizontalAlignment="Center"
@@ -273,6 +523,17 @@ behaviors:BlockDragBehavior.MouseUpCommand="{Binding DataContext.BlockMouseUpCom
                     </Style>
                 </TextBox.Style>
             </TextBox>
+            <Rectangle Width="10"
+                Height="10"
+                Fill="DodgerBlue"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                Cursor="SizeNWSE"
+                Visibility="{Binding IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}"
+                behaviors:BlockResizeBehavior.InteractionCanvas="{Binding ElementName=EditorCanvas}"
+                behaviors:BlockResizeBehavior.MouseDownCommand="{Binding DataContext.BlockResizeMouseDownCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                behaviors:BlockResizeBehavior.MouseMoveCommand="{Binding DataContext.BlockResizeMouseMoveCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                behaviors:BlockResizeBehavior.MouseUpCommand="{Binding DataContext.BlockResizeMouseUpCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
         </Grid>
     </DataTemplate>
 </ResourceDictionary>

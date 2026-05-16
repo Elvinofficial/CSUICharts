@@ -59,7 +59,7 @@ namespace UICharts.Desktop.ViewModels
 
         private double AngleRadians => Math.Atan2(Y2 - Y1, X2 - X1);
 
-        private Point GetNeatestConnectionPoint (
+        private static Point GetNeatestConnectionPoint(
             BlockViewModel from,
             BlockViewModel to)
         {
@@ -72,7 +72,7 @@ namespace UICharts.Desktop.ViewModels
                 .First();
         }
 
-        private double GetDistance(Point a, Point b)
+        private static double GetDistance(Point a, Point b)
         {
             var dx = a.X - b.X;
             var dy = a.Y - b.Y;

@@ -30,6 +30,12 @@ namespace UICharts.Desktop.Services
             if (connectionStartBlock == block)
                 return;
 
+            if (connectionStartBlock.Model.Type == Core.Enums.BlockType.End)
+                return;
+
+            if (block.Type == Core.Enums.BlockType.Start)
+                return;
+
             var model = new ConnectionModel
             {
                 FromBlockId = connectionStartBlock.Model.Id,

@@ -24,6 +24,7 @@ namespace UICharts
             containerRegistry.Register<ISelectionService, SelectionService>();
             containerRegistry.Register<IDeleteService, DeleteService>();
             containerRegistry.Register<IPngExportService, PngExportService>();
+            containerRegistry.Register<IBlockResizeService, BlockResizeService>();
         }
 
         // добавить модуль справки (типа подсказок)

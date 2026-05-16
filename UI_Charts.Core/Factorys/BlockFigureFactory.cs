@@ -16,6 +16,11 @@ namespace UICharts.Core.Factorys
                 BlockType.Decision => new DecisionFigure(),
                 BlockType.InputOutput => new InputOutputFigure(),
                 BlockType.StartEnd => new StartEndFigure(),
+                BlockType.Start => new StartFigure(),
+                BlockType.End => new EndFigure(),
+                BlockType.Reference => new ReferenceFigure(),
+                BlockType.Loop => new LoopFigure(),
+                BlockType.Procedure => new ProcedureFigure(),
                 _ => new ProcessFigure(),
             };
         }

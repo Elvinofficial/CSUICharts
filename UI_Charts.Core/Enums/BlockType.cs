@@ -8,7 +8,12 @@ namespace UICharts.Core.Enums
     {
         Process,
         Decision,
-        StartEnd,
-        InputOutput
+        StartEnd,// уже не существует, но остался совместимости
+        InputOutput,
+        Start,
+        End,
+        Loop,
+        Reference,
+        Procedure,
     }
 }

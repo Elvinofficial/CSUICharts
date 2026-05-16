@@ -83,6 +83,34 @@
                                             <Setter Property="ContentTemplate"
                                                     Value="{StaticResource DecisionTemplate}" />
                                         </DataTrigger>
+                                        <DataTrigger Binding="{Binding Type}"
+             Value="{x:Static enums:BlockType.Loop}">
+                                            <Setter Property="ContentTemplate"
+            Value="{StaticResource LoopTemplate}" />
+                                        </DataTrigger>
+
+                                        <DataTrigger Binding="{Binding Type}"
+             Value="{x:Static enums:BlockType.Procedure}">
+                                            <Setter Property="ContentTemplate"
+            Value="{StaticResource ProcedureTemplate}" />
+                                        </DataTrigger>
+
+                                        <DataTrigger Binding="{Binding Type}"
+             Value="{x:Static enums:BlockType.Reference}">
+                                            <Setter Property="ContentTemplate"
+            Value="{StaticResource ReferenceTemplate}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Type}"
+             Value="{x:Static enums:BlockType.Start}">
+                                            <Setter Property="ContentTemplate"
+            Value="{StaticResource StartEndTemplate}" />
+                                        </DataTrigger>
+
+                                        <DataTrigger Binding="{Binding Type}"
+             Value="{x:Static enums:BlockType.End}">
+                                            <Setter Property="ContentTemplate"
+            Value="{StaticResource StartEndTemplate}" />
+                                        </DataTrigger>
 
                                         <DataTrigger Binding="{Binding Type}"
                                                      Value="{x:Static enums:BlockType.StartEnd}">

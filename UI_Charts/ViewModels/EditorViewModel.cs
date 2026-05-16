@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows;
+using UICharts.Core.Factorys;
 using UICharts.Core.Models;
 using UICharts.Desktop.Interaction;
 using UICharts.Desktop.Services;
@@ -17,6 +18,8 @@ namespace UICharts.Desktop.ViewModels
         private readonly ISelectionService selectionService;
 
         private readonly IDeleteService deleteService;
+
+        private readonly IBlockResizeService resizeService;
 
         private DiagramModel? currentDiagram;
         public DiagramModel? CurrentDiagram
@@ -67,12 +70,17 @@ namespace UICharts.Desktop.ViewModels
         public DelegateCommand ToggleConnectionModeCommand { get; }
 
         public DelegateCommand DeleteSelectedCommand { get; }
+
+        public DelegateCommand<BlockMouseEventArgs> BlockResizeMouseDownCommand { get; }
+        public DelegateCommand<Point?> BlockResizeMouseMoveCommand { get; }
+        public DelegateCommand BlockResizeMouseUpCommand { get; }
         public EditorViewModel(
             IBlockDragService dragService,
             IConnectionService connectionService,
             IDiagramMappingService mappingService,
             ISelectionService selectionService,
-            IDeleteService deleteService
+            IDeleteService deleteService,
+            IBlockResizeService resizeService
             )
         {
             this.dragService = dragService;
@@ -80,12 +88,14 @@ namespace UICharts.Desktop.ViewModels
             this.mappingService = mappingService;
             this.selectionService = selectionService;
             this.deleteService = deleteService;
+            this.resizeService = resizeService;
 
             CanvasClickCommand = new DelegateCommand<System.Windows.Point?>(OnCanvasClick);
             SelectBlockCommand = new DelegateCommand<BlockViewModel>(OnSelectBlock);
             BeginEditBlockCommand = new DelegateCommand<BlockViewModel>(OnBeginEditBlock);
             EndEditBlockCommand = new DelegateCommand<BlockViewModel>(OnEndEditBlock);
             DeleteSelectedCommand = new DelegateCommand(OnDeleteSelected);
+
 
             ToggleConnectionModeCommand = new DelegateCommand(() =>
             {
@@ -96,7 +106,13 @@ namespace UICharts.Desktop.ViewModels
             BlockMouseDownCommand = new DelegateCommand<BlockMouseEventArgs>(OnBlockMouseDown);
             BlockMouseMoveCommand = new DelegateCommand<Point?>(OnBlockMouseMove);
             BlockMouseUpCommand = new DelegateCommand(OnBlockMouseUp);
+
+            BlockResizeMouseDownCommand = new DelegateCommand<BlockMouseEventArgs>(OnBlockResizeMouseDown);
+            BlockResizeMouseMoveCommand = new DelegateCommand<Point?>(OnBlockResizeMouseMove);
+            BlockResizeMouseUpCommand = new DelegateCommand(OnBlockResizeMouseUp);
         }
+
+
 
         private void LoadBlocksFromDiagram()
         {
@@ -114,10 +130,15 @@ namespace UICharts.Desktop.ViewModels
             if (selectionService.IsEditingAny(Blocks))
                 return;
 
+            var figure = new BlockFigureFactory()
+            .GetFigure(SelectedFigure.Type);
+
             var model = new BlockModel
             {
                 X = point.Value.X,
                 Y = point.Value.Y,
+                Width = figure.DefaultWidth,
+                Height = figure.DefaultHeight,
                 Text = SelectedFigure.Name,
                 Type = SelectedFigure.Type
             };
@@ -216,6 +237,34 @@ namespace UICharts.Desktop.ViewModels
             deleteService.DeleteBlock(CurrentDiagram, Blocks, Connections, SelectedBlock);
 
             SelectedBlock = null;
+        }
+
+        private void OnBlockResizeMouseDown(BlockMouseEventArgs args)
+        {
+
+            
+
+            if (args == null)
+                return;
+
+            selectionService.SelectBlock(Blocks, args.Block, out var selected);
+            SelectedBlock = selected;
+
+            resizeService.StartResize(args.Block, args.MousePosition);
+        }
+
+        private void OnBlockResizeMouseMove(Point? point)
+        {
+
+            if (point == null)
+                return;
+
+            resizeService.ResizeTo(point.Value);
+        }
+
+        private void OnBlockResizeMouseUp()
+        {
+            resizeService.EndResize();
         }
     }
 }
