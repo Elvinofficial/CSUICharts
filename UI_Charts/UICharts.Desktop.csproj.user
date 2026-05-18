@@ -8,6 +8,9 @@
     <Compile Update="Views\EditorView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\HelpWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\ToolboxView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

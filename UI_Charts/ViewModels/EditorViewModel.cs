@@ -84,6 +84,7 @@ namespace UICharts.Desktop.ViewModels
         }
 
         private BlockViewModel? previewStartBlock;
+        private Size currentCanvasSize;
 
         public DelegateCommand<System.Windows.Point?> CanvasClickCommand { get; }
         public DelegateCommand<BlockViewModel> SelectBlockCommand { get; }
@@ -204,6 +205,7 @@ namespace UICharts.Desktop.ViewModels
             vm.IsSelected = true;
             SelectedBlock = vm;
             SelectedFigure = null;
+           //selectionService.ClearSelection(Blocks);
         }
 
         private void OnSelectBlock(BlockViewModel? block)
@@ -269,6 +271,8 @@ namespace UICharts.Desktop.ViewModels
             if (args == null)
                 return;
 
+            currentCanvasSize = args.CanvasSize;
+
             selectionService.EndEditingAll(Blocks);
 
             if (args.IsShiftPressed)
@@ -296,9 +300,8 @@ namespace UICharts.Desktop.ViewModels
             if(IsConnectionPreviewVisible)
             {
                 previewEndPoint = point.Value;
-            }    
-
-            dragService.DragTo(point.Value);
+            }
+            dragService.DragTo(point.Value, currentCanvasSize);
         }
 
         private void OnBlockMouseUp()
@@ -337,12 +340,17 @@ namespace UICharts.Desktop.ViewModels
             if (point == null)
                 return;
 
-            resizeService.ResizeTo(point.Value);
+            resizeService.ResizeTo(point.Value, currentCanvasSize);
         }
 
         private void OnBlockResizeMouseUp()
         {
             resizeService.EndResize();
+        }
+        public void ClearSelection()
+        {
+            selectionService.ClearSelection(Blocks);
+            SelectedBlock = null;
         }
     }
 }

@@ -1,9 +1,11 @@
 ﻿using System.Windows;
 using UICharts.Core.Interfaces;
+using UICharts.Desktop.Modules;
 using UICharts.Desktop.Services;
 using UICharts.Desktop.Services.Interfaces;
 using UICharts.Desktop.Views;
 using UICharts.Infrastructure.Services;
+using Prism.Modularity;
 
 
 namespace UICharts
@@ -28,9 +30,9 @@ namespace UICharts
         }
 
         // добавить модуль справки (типа подсказок)
-        protected override void InitializeModules() // не точно это
+        protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
         {
-            base.InitializeModules(); // вместо baase наш модуль
+            moduleCatalog.AddModule<HelpModule>();
         }
     }
 }

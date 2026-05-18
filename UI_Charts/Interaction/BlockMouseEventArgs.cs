@@ -7,11 +7,14 @@ namespace UICharts.Desktop.Interaction
         BlockViewModel block,
         Point mousePosition,
         int clickCount,
-        bool isShiftPressed)
+        bool isShiftPressed,
+        Size canvasSize)
     {
         public BlockViewModel Block { get; } = block;
         public Point MousePosition { get; } = mousePosition;
         public int ClickCount { get; } = clickCount;
         public bool IsShiftPressed { get; } = isShiftPressed;
+
+        public Size CanvasSize { get; } = canvasSize;
     }
 }

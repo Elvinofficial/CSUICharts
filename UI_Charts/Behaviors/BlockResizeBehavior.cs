@@ -90,7 +90,8 @@ namespace UICharts.Desktop.Behaviors
                 block,
                 e.GetPosition(canvas),
                 e.ClickCount,
-                Keyboard.Modifiers.HasFlag(ModifierKeys.Shift));
+                Keyboard.Modifiers.HasFlag(ModifierKeys.Shift),
+                new Size (canvas.ActualWidth, canvas.ActualWidth));
 
             command?.Execute(args);
 

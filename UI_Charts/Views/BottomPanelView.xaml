@@ -18,21 +18,21 @@
 
             <Button
                 Content="Создать"
-                Width="120"
+                Width="60"
                 Height="32"
                 Margin="10,0"
                 Command="{Binding CreateWorkspaceCommand}"/>
 
             <Button
                 Content="Открыть"
-                Width="120"
+                Width="80"
                 Height="35"
                 Margin="10,0"
                 Command="{Binding DataContext.LoadProjectCommand,
               RelativeSource={RelativeSource AncestorType=Window}}"/>
             <Button
                 Content="Сохранить"
-                Width="120"
+                Width="80"
                 Height="35"
                 Margin="10,0"
                 Command="{Binding DataContext.SaveProjectCommand,
@@ -40,12 +40,19 @@
 
             <Button
                 Content="Экспортировать"
-                Width="120"
+                Width="100"
                 Height="36"
                 Margin="10,0"
                 Command="{Binding DataContext.ExportPngCommand,
                     RelativeSource={RelativeSource AncestorType=Window}}"
                 CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"/>
+            <Button
+    Content="Справка"
+    Width="130"
+    Height="35"
+    Margin="10,0"
+    Command="{Binding DataContext.ShowHelpCommand,
+              RelativeSource={RelativeSource AncestorType=Window}}"/>
 
         </StackPanel>
     </Border>

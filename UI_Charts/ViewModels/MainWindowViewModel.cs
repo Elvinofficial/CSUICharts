@@ -2,8 +2,10 @@
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
+using System.Windows.Media;
 using UICharts.Core.Interfaces;
 using UICharts.Core.Models;
+using UICharts.Desktop.Events;
 using UICharts.Desktop.Services;
 using UICharts.Desktop.Services.Interfaces;
 
@@ -39,9 +41,15 @@ namespace UICharts.Desktop.ViewModels
 
         private int workspaceCounter = 0;
 
+        private readonly IEventAggregator eventAggregator;
+
+        public DelegateCommand ShowHelpCommand { get; }
+
+
         public MainWindowViewModel(
             IProjectService projectService,
             IPngExportService pngExportService,
+            IEventAggregator eventAggregator,
             EditorViewModel editorViewModel,
             ToolboxViewModel toolboxViewModel)
         {
@@ -49,6 +57,8 @@ namespace UICharts.Desktop.ViewModels
             SaveProjectCommand = new DelegateCommand(SaveProject);
             LoadProjectCommand = new DelegateCommand(LoadProject);
             ExportPngCommand = new DelegateCommand<object>(ExportPng);
+            ShowHelpCommand = new DelegateCommand(ShowHelp);
+            this.eventAggregator = eventAggregator;
             Toolbox = toolboxViewModel;
             Editor = editorViewModel;
             this.projectService = projectService;
@@ -78,6 +88,14 @@ namespace UICharts.Desktop.ViewModels
             };
             Workspaces.Add(workspace);
             SelectedWorkspace = workspace;
+        }
+
+        private void ShowHelp()
+        {
+            //MessageBox.Show("Команда справки вызвалась");
+            eventAggregator
+                .GetEvent<ShowHelpRequestedEvent>()
+                .Publish();
         }
         private void SaveProject()
         {
@@ -132,6 +150,38 @@ namespace UICharts.Desktop.ViewModels
             SelectedWorkspace = workspace;
         }
 
+
+        /// <summary>
+        /// Ищет дочерний элемент с типом T и именем childName. Подход рекурсивный
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="parent"></param>
+        /// <param name="childName"></param>
+        /// <returns></returns>
+        private T? FindChild<T>(DependencyObject parent, string childName)
+             where T : FrameworkElement
+        {
+            var childrenCount = VisualTreeHelper.GetChildrenCount(parent);
+
+            for (int i = 0; i < childrenCount; i++)
+            {
+                var child = VisualTreeHelper.GetChild(parent, i);
+
+                if (child is T frameworkElement &&
+                    frameworkElement.Name == childName)
+                {
+                    return frameworkElement;
+                }
+
+                var result = FindChild<T>(child, childName);
+
+                if (result != null)
+                    return result;
+            }
+
+            return null;
+        }
+
         private void ExportPng(object parameter)
         {
             if (parameter is not Window window)
@@ -139,9 +189,9 @@ namespace UICharts.Desktop.ViewModels
                 MessageBox.Show("Не удалось получить область для экспорта.");
                 return;
             }
-            var editorArea = window.FindName("EditorArea") as FrameworkElement;
+            var canvas = FindChild<FrameworkElement>(window, "EditorCanvas");
 
-            if (editorArea == null)
+            if (canvas == null)
             {
                 MessageBox.Show("Не удалось найти рабочее поле для экспорта.");
                 return;
@@ -158,9 +208,16 @@ namespace UICharts.Desktop.ViewModels
             if (dialog.ShowDialog() != true)
                 return;
 
-            pngExportService.ExportToPng(editorArea, dialog.FileName);
-
-            MessageBox.Show("Диаграмма экспортирована в PNG.");
+            try
+            {
+                Editor.ClearSelection();
+                pngExportService.ExportToPng(canvas, dialog.FileName);
+                MessageBox.Show("Диаграмма экспортирована в PNG.");
+            }
+            catch (InvalidOperationException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
     }

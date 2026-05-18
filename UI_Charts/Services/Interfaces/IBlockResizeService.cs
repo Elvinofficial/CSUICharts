@@ -6,7 +6,7 @@ namespace UICharts.Desktop.Services.Interfaces
     public interface IBlockResizeService
     {
         void StartResize(BlockViewModel block, Point mousePosition);
-        void ResizeTo(Point mousePosition);
+        void ResizeTo(Point mousePosition, Size canvasSize);
         void EndResize();
     }
 }

@@ -22,7 +22,7 @@ namespace UICharts.Desktop.Services
             startHeight = block.Height;
         }
 
-        public void ResizeTo(Point mousePosition)
+        public void ResizeTo(Point mousePosition, Size canvasSize)
         {
             if (currentBlock == null)
                 return;
@@ -30,8 +30,14 @@ namespace UICharts.Desktop.Services
             var dx = mousePosition.X - startMouse.X;
             var dy = mousePosition.Y - startMouse.Y;
 
-            currentBlock.Width = Math.Max(MinWidth, startWidth + dx);
-            currentBlock.Height = Math.Max(MinHeight, startHeight + dy);
+            var newWidth = Math.Max(MinWidth, startWidth + dx);
+            var newHeight = Math.Max(MinHeight, startHeight + dy);
+
+            var maxWidth = canvasSize.Width - currentBlock.X;
+            var maxHeight = canvasSize.Height - currentBlock.Y;
+
+            currentBlock.Width = Math.Min(newWidth, maxWidth);
+            currentBlock.Height = Math.Min(newHeight, maxHeight);
         }
 
         public void EndResize()

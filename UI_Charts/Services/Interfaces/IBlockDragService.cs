@@ -10,7 +10,7 @@ namespace UICharts.Desktop.Services.Interfaces
     {
         void StartDrag(BlockViewModel block, Point mousePosition);
 
-        void DragTo(Point currentMouse);
+        void DragTo(Point mousePosition, Size canvasSize);
 
         void EndDrag();
     }

@@ -10,7 +10,7 @@
         <DataTemplate x:Key="ProcessTemplate">
             <Grid Width="{Binding Width}"
             Height="{Binding Height}"
-            behaviors:BlockClickBehavior.InteractionCanvas="{Binding RelativeSource={RelativeSource AncestorType=Canvas}}"
+            behaviors:BlockClickBehavior.InteractionCanvas="{Binding ElementName=EditorCanvas}"
             behaviors:BlockClickBehavior.MouseDownCommand="{Binding DataContext.BlockMouseDownCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
 
             behaviors:BlockDragBehavior.InteractionCanvas="{Binding ElementName=EditorCanvas}"

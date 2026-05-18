@@ -18,7 +18,7 @@ namespace UICharts.Desktop.Services
             startY = block.Y;
         }
 
-        public void DragTo(Point currentMouse)
+        public void DragTo(Point currentMouse, Size canvasSize)
         {
             if (draggedBlock == null)
                 return;
@@ -28,6 +28,9 @@ namespace UICharts.Desktop.Services
 
             draggedBlock.X = startX + dx;
             draggedBlock.Y = startY + dy;
+
+            draggedBlock.X = Math.Max(0, Math.Min(canvasSize.Width - draggedBlock.Width, draggedBlock.X));
+            draggedBlock.Y = Math.Max(0, Math.Min(canvasSize.Height - draggedBlock.Height, draggedBlock.Y));
         }
 
         public void EndDrag()
