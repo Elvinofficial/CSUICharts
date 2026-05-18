@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace UICharts.Desktop.Behaviors
@@ -45,6 +46,49 @@ namespace UICharts.Desktop.Behaviors
             {
                 command.Execute(point);
             }
+        }
+        public static readonly DependencyProperty MouseMoveCommandProperty =
+    DependencyProperty.RegisterAttached(
+        "MouseMoveCommand",
+        typeof(ICommand),
+        typeof(EditorCanvasBehavior),
+        new PropertyMetadata(null, OnMouseMoveCommandChanged));
+
+        public static void SetMouseMoveCommand(DependencyObject obj, ICommand value)
+        {
+            obj.SetValue(MouseMoveCommandProperty, value);
+        }
+
+        public static ICommand GetMouseMoveCommand(DependencyObject obj)
+        {
+            return (ICommand)obj.GetValue(MouseMoveCommandProperty);
+        }
+
+        private static void OnMouseMoveCommandChanged(
+            DependencyObject d,
+            DependencyPropertyChangedEventArgs e)
+        {
+            if (d is UIElement element)
+            {
+                element.MouseMove -= OnMouseMove;
+                element.MouseMove += OnMouseMove;
+            }
+        }
+
+        private static void OnMouseMove(object sender, MouseEventArgs e)
+        {
+            if (sender is not Canvas canvas)
+                return;
+
+            var command = GetMouseMoveCommand(canvas);
+
+            if (command == null)
+                return;
+
+            var point = e.GetPosition(canvas);
+
+            if (command.CanExecute(point))
+                command.Execute(point);
         }
     }
 }

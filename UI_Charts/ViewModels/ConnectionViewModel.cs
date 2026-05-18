@@ -2,6 +2,8 @@
 using System.Windows;
 using System.Windows.Media;
 using UICharts.Core.Models;
+using UICharts.Desktop.Services;
+using UICharts.Desktop.Services.Interfaces;
 
 namespace UICharts.Desktop.ViewModels
 {
@@ -68,16 +70,8 @@ namespace UICharts.Desktop.ViewModels
                 to.Y + to.Height / 2);
 
             return from.ConnectionPoints
-                .OrderBy(point => GetDistance(point, targetCentter))
+                .OrderBy(point => ConnectionService.GetDistance(point, targetCentter))
                 .First();
-        }
-
-        private static double GetDistance(Point a, Point b)
-        {
-            var dx = a.X - b.X;
-            var dy = a.Y - b.Y;
-
-            return Math.Sqrt(dx * dx + dy * dy);
         }
 
         private void Update()

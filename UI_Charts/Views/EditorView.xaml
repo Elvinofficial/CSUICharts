@@ -32,7 +32,8 @@
         <Canvas x:Name="EditorCanvas"
                 
                 Background="#ECECEC"
-                behaviors:EditorCanvasBehavior.CanvasClickCommand="{Binding CanvasClickCommand}">
+                behaviors:EditorCanvasBehavior.CanvasClickCommand="{Binding CanvasClickCommand}"
+                behaviors:EditorCanvasBehavior.MouseMoveCommand="{Binding CanvasMouseMoveCommand}">
             
             <!-- Линии снизу -->
             <ItemsControl ItemsSource="{Binding Connections}">
@@ -53,7 +54,16 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
-            
+
+            <Line X1="{Binding PreviewStartPoint.X}"
+      Y1="{Binding PreviewStartPoint.Y}"
+      X2="{Binding PreviewEndPoint.X}"
+      Y2="{Binding PreviewEndPoint.Y}"
+      Stroke="Gray"
+      StrokeThickness="2"
+      StrokeDashArray="5 3"
+      Visibility="{Binding IsConnectionPreviewVisible, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
             <!-- Блоки -->
             <ItemsControl ItemsSource="{Binding Blocks}">
                 <ItemsControl.ItemsPanel>

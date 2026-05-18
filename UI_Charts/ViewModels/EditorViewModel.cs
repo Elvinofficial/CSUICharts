@@ -60,6 +60,31 @@ namespace UICharts.Desktop.ViewModels
             get => selectedFigure;
             set => SetProperty(ref selectedFigure, value);
         }
+
+        private bool isConnectionPreviewVisible;
+
+        public bool IsConnectionPreviewVisible
+        {
+            get => isConnectionPreviewVisible;
+            set => SetProperty(ref isConnectionPreviewVisible, value);
+        }
+
+        private Point previewStartPoint;
+        public Point PreviewStartPoint
+        {
+            get => previewStartPoint;
+            set => SetProperty(ref previewStartPoint, value);
+        }
+
+        private Point previewEndPoint;
+        public Point PreviewEndPoint
+        {
+            get => previewEndPoint;
+            set => SetProperty(ref previewEndPoint, value);
+        }
+
+        private BlockViewModel? previewStartBlock;
+
         public DelegateCommand<System.Windows.Point?> CanvasClickCommand { get; }
         public DelegateCommand<BlockViewModel> SelectBlockCommand { get; }
         public DelegateCommand<BlockViewModel> BeginEditBlockCommand { get; }
@@ -74,6 +99,8 @@ namespace UICharts.Desktop.ViewModels
         public DelegateCommand<BlockMouseEventArgs> BlockResizeMouseDownCommand { get; }
         public DelegateCommand<Point?> BlockResizeMouseMoveCommand { get; }
         public DelegateCommand BlockResizeMouseUpCommand { get; }
+
+        public DelegateCommand<Point?> CanvasMouseMoveCommand { get; }
         public EditorViewModel(
             IBlockDragService dragService,
             IConnectionService connectionService,
@@ -110,6 +137,7 @@ namespace UICharts.Desktop.ViewModels
             BlockResizeMouseDownCommand = new DelegateCommand<BlockMouseEventArgs>(OnBlockResizeMouseDown);
             BlockResizeMouseMoveCommand = new DelegateCommand<Point?>(OnBlockResizeMouseMove);
             BlockResizeMouseUpCommand = new DelegateCommand(OnBlockResizeMouseUp);
+            CanvasMouseMoveCommand = new DelegateCommand<Point?>(OnCanvasMouseMove);
         }
 
 
@@ -122,6 +150,30 @@ namespace UICharts.Desktop.ViewModels
             mappingService.Map(CurrentDiagram, Blocks, Connections);
         }
 
+        private void OnCanvasMouseMove(Point? point)
+        {
+            if (point == null)
+                return;
+
+            if (!IsConnectionPreviewVisible || previewStartBlock == null)
+                return;
+
+            var mousePoint = point.Value;
+
+            var targetBlock = Blocks
+                .Where(block => block != previewStartBlock)
+                .FirstOrDefault(block =>
+                    mousePoint.X >= block.X &&
+                    mousePoint.X <= block.X + block.Width &&
+                    mousePoint.Y >= block.Y &&
+                    mousePoint.Y <= block.Y + block.Height);
+            var points = connectionService.GetPreviewPoints(
+                previewStartBlock,
+                targetBlock,
+                mousePoint);
+            PreviewStartPoint = points.Start;
+            PreviewEndPoint = points.End;
+        }
         private void OnCanvasClick(System.Windows.Point? point)
         {
             if (point == null || CurrentDiagram == null || SelectedFigure == null)
@@ -186,8 +238,29 @@ namespace UICharts.Desktop.ViewModels
             selectionService.EndEdit(block);
         }
 
+ 
+
         public void HandleConnectionClick(BlockViewModel block)
         {
+            if(!IsConnectionPreviewVisible)
+            {
+                previewStartBlock = block;
+
+                var points = connectionService.GetPreviewPoints(
+                    previewStartBlock,
+                    null,
+                    new Point(block.X + block.Width / 2, block.Y + block.Height / 2));
+
+                PreviewStartPoint =points.Start;
+                PreviewEndPoint = points.End;
+                IsConnectionPreviewVisible = true;
+            }
+            else
+            {
+                previewStartBlock = null;
+                IsConnectionPreviewVisible = false;
+            }
+
             connectionService.HandleConnectionClick(block, CurrentDiagram,Connections);
         }
 
@@ -219,6 +292,11 @@ namespace UICharts.Desktop.ViewModels
         {
             if (point == null)
                 return;
+
+            if(IsConnectionPreviewVisible)
+            {
+                previewEndPoint = point.Value;
+            }    
 
             dragService.DragTo(point.Value);
         }
