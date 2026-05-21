@@ -7,6 +7,13 @@ namespace UICharts.Desktop.Services
 {
     public class DiagramMappingService : IDiagramMappingService
     {
+        private readonly IConnectionRoutingService routingService;
+
+        public DiagramMappingService(
+            IConnectionRoutingService routingService)
+        {
+            this.routingService = routingService;
+        }
         public void Map(
             DiagramModel? diagram,
             ObservableCollection<BlockViewModel> blocks,
@@ -37,6 +44,7 @@ namespace UICharts.Desktop.Services
                     continue;
 
                 var connectionVm = new ConnectionViewModel(
+                    routingService,
                     connectionModel,
                     fromVm,
                     toVm);

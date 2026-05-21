@@ -7,7 +7,10 @@ namespace UICharts.Desktop.Services.Interfaces
 {
     public interface IConnectionService
     {
-        void HandleConnectionClick(BlockViewModel block, DiagramModel? currentDiagram, ObservableCollection<ConnectionViewModel> connections);
+        void HandleConnectionClick(BlockViewModel block,
+                Point mousePosition,
+                DiagramModel? currentDiagram,
+                ObservableCollection<ConnectionViewModel> connections);
         void Reset();
         (Point Start, Point End) GetPreviewPoints(
             BlockViewModel fromBlock,

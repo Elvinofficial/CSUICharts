@@ -45,25 +45,79 @@
 
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Line X1="{Binding X1}"
-                  Y1="{Binding Y1}"
-                  X2="{Binding X2}"
-                  Y2="{Binding Y2}"
-                  Stroke="Black"
-                  StrokeThickness="2"/>
+                        <Grid>
+                            <!-- Толстая невидимая зона клика -->
+                            <Polyline Points="{Binding RoutePoints}"
+                          Stroke="Transparent"
+                          StrokeThickness="12"
+                          Cursor="Hand">
+                                <Polyline.InputBindings>
+                                    <MouseBinding MouseAction="LeftClick"
+                                      Command="{Binding DataContext.SelectConnectionCommand,
+                                                RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                      CommandParameter="{Binding}" />
+                                </Polyline.InputBindings>
+                            </Polyline>
+
+                            <!-- Видимая линия -->
+                            <Polyline Points="{Binding RoutePoints}"
+                          StrokeThickness="2">
+                                <Polyline.Style>
+                                    <Style TargetType="Polyline">
+                                        <Setter Property="Stroke" Value="Black"/>
+                                        <Setter Property="StrokeThickness" Value="2"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                <Setter Property="Stroke" Value="DodgerBlue"/>
+                                                <Setter Property="StrokeThickness" Value="3"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Polyline.Style>
+                            </Polyline>
+                        </Grid>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
 
-            <Line X1="{Binding PreviewStartPoint.X}"
-      Y1="{Binding PreviewStartPoint.Y}"
-      X2="{Binding PreviewEndPoint.X}"
-      Y2="{Binding PreviewEndPoint.Y}"
-      Stroke="Gray"
-      StrokeThickness="2"
-      StrokeDashArray="5 3"
-      Visibility="{Binding IsConnectionPreviewVisible, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+            <!-- Фантомная линия должна быть отдельно -->
+            <Polyline Points="{Binding PreviewRoutePoints}"
+          Stroke="Gray"
+          StrokeThickness="2"
+          StrokeDashArray="5 3"
+          Visibility="{Binding IsConnectionPreviewVisible,
+                       Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
+            <ItemsControl ItemsSource="{Binding Connections}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Ellipse Width="12"
+Height="12"
+Fill="DodgerBlue"
+Stroke="White"
+StrokeThickness="2"
+Cursor="Hand"
+Visibility="{Binding IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}"
+behaviors:ConnectionEndpointDragBehavior.InteractionCanvas="{Binding ElementName=EditorCanvas}"
+behaviors:ConnectionEndpointDragBehavior.MouseDownCommand="{Binding DataContext.ConnectionEndMouseDownCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+behaviors:ConnectionEndpointDragBehavior.MouseMoveCommand="{Binding DataContext.ConnectionEndMouseMoveCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+behaviors:ConnectionEndpointDragBehavior.MouseUpCommand="{Binding DataContext.ConnectionEndMouseUpCommand, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                            <Ellipse.RenderTransform>
+                                <TranslateTransform X="{Binding EndHandle.X}"
+                   Y="{Binding EndHandle.Y}" />
+                            </Ellipse.RenderTransform>
+                        </Ellipse>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            
             <!-- Блоки -->
             <ItemsControl ItemsSource="{Binding Blocks}">
                 <ItemsControl.ItemsPanel>

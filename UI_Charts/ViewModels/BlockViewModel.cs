@@ -40,6 +40,31 @@ namespace UICharts.Desktop.ViewModels
 
         private IBlockFigure Figure => figureFactory.GetFigure(Type);
 
+        public ConnectionSide GetConnectionSide(Point point)
+        {
+            var left = X;
+            var right = X + Width;
+            var top = Y;
+            var bottom = Y + Height;
+
+            var distanceToLeft = Math.Abs(point.X - left);
+            var distanceToRight = Math.Abs(point.X - right);
+            var distanceToTop = Math.Abs(point.Y - top);
+            var distanceToBottom = Math.Abs(point.Y - bottom);
+
+            var min = new[]
+            {
+        (Side: ConnectionSide.Left, Distance: distanceToLeft),
+        (Side: ConnectionSide.Right, Distance: distanceToRight),
+        (Side: ConnectionSide.Top, Distance: distanceToTop),
+        (Side: ConnectionSide.Bottom, Distance: distanceToBottom)
+    }
+            .OrderBy(x => x.Distance)
+            .First();
+
+            return min.Side;
+        }
+
         public double X
         {
             get => model.X;
@@ -123,7 +148,18 @@ namespace UICharts.Desktop.ViewModels
             set => SetProperty(ref isEditing, value);
         }
 
+        public Point GetConnectionPointByIndex(int index)
+        {
+            var points = ConnectionPoints.ToList();
 
+            if (points.Count == 0)
+                return new Point(X + Width / 2, Y + Height / 2);
+
+            if (index < 0 || index >= points.Count)
+                index = 0;
+
+            return points[index];
+        }
         /// <summary>
         /// Возвращает абсолютные координаты точек подключения блока, вычисляемые на основе его типа и размеров
         /// </summary>

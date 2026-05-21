@@ -9,15 +9,23 @@ namespace UICharts.Desktop.Services
     public class ConnectionService : IConnectionService
     {
         private BlockViewModel? connectionStartBlock;
+        private readonly IConnectionRoutingService routingService;
+        private int connectionStartPointIndex;
+        public ConnectionService(
+            IConnectionRoutingService routingService)
+        {
+            this.routingService = routingService;
+        }
 
         public void Reset()
         {
             connectionStartBlock = null;
         }
         public void HandleConnectionClick(
-            BlockViewModel block,
-            DiagramModel? currentDiagram,
-            ObservableCollection<ConnectionViewModel> connections)
+                BlockViewModel block,
+                Point mousePosition,
+                DiagramModel? currentDiagram,
+                ObservableCollection<ConnectionViewModel> connections)
         {
             if (currentDiagram == null)
                 return;
@@ -25,6 +33,7 @@ namespace UICharts.Desktop.Services
             if (connectionStartBlock == null)
             {
                 connectionStartBlock = block;
+                connectionStartPointIndex = GetNearestConnectionPointIndex(block, mousePosition);
                 return;
             }
 
@@ -37,13 +46,19 @@ namespace UICharts.Desktop.Services
             if (block.Type == Core.Enums.BlockType.Start)
                 return;
 
+            var targetPointIndex = GetNearestConnectionPointIndex(block, mousePosition);
+
             var model = new ConnectionModel
             {
                 FromBlockId = connectionStartBlock.Model.Id,
-                ToBlockId = block.Model.Id
+                ToBlockId = block.Model.Id,
+
+                FromPointIndex = connectionStartPointIndex,
+                ToPointIndex = targetPointIndex
             };
 
             var vm = new ConnectionViewModel(
+                routingService,
                 model,
                 connectionStartBlock,
                 block);
@@ -93,6 +108,26 @@ namespace UICharts.Desktop.Services
             var endPoint = GetNearestConnectionPoint(targetBlock, fromCenter);
 
             return (startPoint, endPoint);
+
+
         }
+        private int GetNearestConnectionPointIndex(BlockViewModel block, Point target)
+        {
+            var points = block.ConnectionPoints.ToList();
+
+            if (points.Count == 0)
+                return 0;
+
+            return points
+                .Select((point, index) => new
+                {
+                    Index = index,
+                    Distance = GetDistance(point, target)
+                })
+                .OrderBy(x => x.Distance)
+                .First()
+                .Index;
+        }
+
     }
 }
