@@ -71,8 +71,33 @@
                         </Style>
                     </TextBox.Style>
                 </TextBox>
+            <ItemsControl ItemsSource="{Binding LocalConnectionPoints}"
+              Visibility="{Binding ShowConnectionPoints, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
 
-                <Rectangle Width="10"
+                <ItemsControl.ItemContainerStyle>
+                    <Style TargetType="ContentPresenter">
+                        <Setter Property="Canvas.Left" Value="{Binding X}" />
+                        <Setter Property="Canvas.Top" Value="{Binding Y}" />
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Ellipse Width="10"
+                     Height="10"
+                     Fill="#8000AA00"
+                     Stroke="Green"
+                     StrokeThickness="1"
+                     Margin="-5,-5,0,0"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <Rectangle Width="10"
                Height="10"
                Fill="DodgerBlue"
                HorizontalAlignment="Right"
@@ -151,8 +176,33 @@
                         </Style>
                     </TextBox.Style>
                 </TextBox>
+            <ItemsControl ItemsSource="{Binding LocalConnectionPoints}"
+              Visibility="{Binding ShowConnectionPoints, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
 
-                <Rectangle Width="10"
+                <ItemsControl.ItemContainerStyle>
+                    <Style TargetType="ContentPresenter">
+                        <Setter Property="Canvas.Left" Value="{Binding X}" />
+                        <Setter Property="Canvas.Top" Value="{Binding Y}" />
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Ellipse Width="10"
+                     Height="10"
+                     Fill="#8000AA00"
+                     Stroke="Green"
+                     StrokeThickness="1"
+                     Margin="-5,-5,0,0"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <Rectangle Width="10"
             Height="10"
             Fill="DodgerBlue"
             HorizontalAlignment="Right"
@@ -229,7 +279,32 @@
                     </Style>
                 </TextBox.Style>
             </TextBox>
+            <ItemsControl ItemsSource="{Binding LocalConnectionPoints}"
+              Visibility="{Binding ShowConnectionPoints, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
 
+                <ItemsControl.ItemContainerStyle>
+                    <Style TargetType="ContentPresenter">
+                        <Setter Property="Canvas.Left" Value="{Binding X}" />
+                        <Setter Property="Canvas.Top" Value="{Binding Y}" />
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Ellipse Width="10"
+                     Height="10"
+                     Fill="#8000AA00"
+                     Stroke="Green"
+                     StrokeThickness="1"
+                     Margin="-5,-5,0,0"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
             <Rectangle Width="10"
                 Height="10"
                 Fill="DodgerBlue"
@@ -294,7 +369,32 @@
                     </Style>
                 </TextBox.Style>
             </TextBox>
+            <ItemsControl ItemsSource="{Binding LocalConnectionPoints}"
+              Visibility="{Binding ShowConnectionPoints, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
 
+                <ItemsControl.ItemContainerStyle>
+                    <Style TargetType="ContentPresenter">
+                        <Setter Property="Canvas.Left" Value="{Binding X}" />
+                        <Setter Property="Canvas.Top" Value="{Binding Y}" />
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Ellipse Width="10"
+                     Height="10"
+                     Fill="#8000AA00"
+                     Stroke="Green"
+                     StrokeThickness="1"
+                     Margin="-5,-5,0,0"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
             <Rectangle Width="10"
                     Height="10"
                     Fill="DodgerBlue"
@@ -375,7 +475,32 @@
                     </Style>
                 </TextBox.Style>
             </TextBox>
+            <ItemsControl ItemsSource="{Binding LocalConnectionPoints}"
+              Visibility="{Binding ShowConnectionPoints, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
 
+                <ItemsControl.ItemContainerStyle>
+                    <Style TargetType="ContentPresenter">
+                        <Setter Property="Canvas.Left" Value="{Binding X}" />
+                        <Setter Property="Canvas.Top" Value="{Binding Y}" />
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Ellipse Width="10"
+                     Height="10"
+                     Fill="#8000AA00"
+                     Stroke="Green"
+                     StrokeThickness="1"
+                     Margin="-5,-5,0,0"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
             <Rectangle Width="10"
                 Height="10"
                 Fill="DodgerBlue"
@@ -442,7 +567,32 @@
                     </Style>
                 </TextBox.Style>
             </TextBox>
+            <ItemsControl ItemsSource="{Binding LocalConnectionPoints}"
+              Visibility="{Binding ShowConnectionPoints, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
 
+                <ItemsControl.ItemContainerStyle>
+                    <Style TargetType="ContentPresenter">
+                        <Setter Property="Canvas.Left" Value="{Binding X}" />
+                        <Setter Property="Canvas.Top" Value="{Binding Y}" />
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Ellipse Width="10"
+                     Height="10"
+                     Fill="#8000AA00"
+                     Stroke="Green"
+                     StrokeThickness="1"
+                     Margin="-5,-5,0,0"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
             <Rectangle Width="10"
                 Height="10"
                 Fill="DodgerBlue"
@@ -523,6 +673,32 @@
                     </Style>
                 </TextBox.Style>
             </TextBox>
+            <ItemsControl ItemsSource="{Binding LocalConnectionPoints}"
+              Visibility="{Binding ShowConnectionPoints, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+
+                <ItemsControl.ItemContainerStyle>
+                    <Style TargetType="ContentPresenter">
+                        <Setter Property="Canvas.Left" Value="{Binding X}" />
+                        <Setter Property="Canvas.Top" Value="{Binding Y}" />
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Ellipse Width="10"
+                     Height="10"
+                     Fill="#8000AA00"
+                     Stroke="Green"
+                     StrokeThickness="1"
+                     Margin="-5,-5,0,0"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
             <Rectangle Width="10"
                 Height="10"
                 Fill="DodgerBlue"

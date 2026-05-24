@@ -23,14 +23,33 @@ namespace UICharts.Desktop.Services
             if (draggedBlock == null)
                 return;
 
+            if (canvasSize.Width <= 0 || canvasSize.Height <= 0)
+                return;
+
+            const double gridSize = 20;
+
             var dx = currentMouse.X - startMouse.X;
             var dy = currentMouse.Y - startMouse.Y;
 
-            draggedBlock.X = startX + dx;
-            draggedBlock.Y = startY + dy;
+            var newX = startX + dx;
+            var newY = startY + dy;
 
-            draggedBlock.X = Math.Max(0, Math.Min(canvasSize.Width - draggedBlock.Width, draggedBlock.X));
-            draggedBlock.Y = Math.Max(0, Math.Min(canvasSize.Height - draggedBlock.Height, draggedBlock.Y));
+            var maxX = Math.Max(0, canvasSize.Width - draggedBlock.Width);
+            var maxY = Math.Max(0, canvasSize.Height - draggedBlock.Height);
+
+            newX = Math.Max(0, Math.Min(maxX, newX));
+            newY = Math.Max(0, Math.Min(maxY, newY));
+
+            newX = Snap(newX, gridSize);
+            newY = Snap(newY, gridSize);
+
+            draggedBlock.X = newX;
+            draggedBlock.Y = newY;
+        }
+
+        private double Snap(double value, double gridSize)
+        {
+            return Math.Round(value / gridSize) * gridSize;
         }
 
         public void EndDrag()

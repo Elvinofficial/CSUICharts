@@ -16,12 +16,33 @@
     
     
     <UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/UICharts.Desktop;component/Resources/BlockTemplates.xaml"/>
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </UserControl.Resources>
+    <ResourceDictionary>
+
+        <DrawingBrush x:Key="EditorGridBrush"
+                      TileMode="Tile"
+                      Viewport="0,0,20,20"
+                      ViewportUnits="Absolute">
+            <DrawingBrush.Drawing>
+                <GeometryDrawing Brush="#ECECEC">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="#D0D0D0" Thickness="0.5"/>
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <GeometryGroup>
+                            <LineGeometry StartPoint="0,0" EndPoint="20,0"/>
+                            <LineGeometry StartPoint="0,0" EndPoint="0,20"/>
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+            </DrawingBrush.Drawing>
+        </DrawingBrush>
+
+        <ResourceDictionary.MergedDictionaries>
+            <ResourceDictionary Source="pack://application:,,,/UICharts.Desktop;component/Resources/BlockTemplates.xaml"/>
+        </ResourceDictionary.MergedDictionaries>
+
+    </ResourceDictionary>
+</UserControl.Resources>
     
     <Border CornerRadius="35"
             BorderBrush="Black"
@@ -29,75 +50,92 @@
             Background="#ECECEC"
             Padding="10">
 
-        <Canvas x:Name="EditorCanvas"
-                
-                Background="#ECECEC"
-                behaviors:EditorCanvasBehavior.CanvasClickCommand="{Binding CanvasClickCommand}"
-                behaviors:EditorCanvasBehavior.MouseMoveCommand="{Binding CanvasMouseMoveCommand}">
-            
-            <!-- Линии снизу -->
-            <ItemsControl ItemsSource="{Binding Connections}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <Canvas />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
+        <Grid x:Name="EditorViewport"
+      ClipToBounds="True"
+      Background="{StaticResource EditorGridBrush}"
+      behaviors:EditorCanvasBehavior.MouseWheelCommand="{Binding MouseWheelCommand}"
+      behaviors:EditorCanvasBehavior.PanMouseDownCommand="{Binding PanMouseDownCommand}"
+      behaviors:EditorCanvasBehavior.PanMouseMoveCommand="{Binding PanMouseMoveCommand}"
+      behaviors:EditorCanvasBehavior.PanMouseUpCommand="{Binding PanMouseUpCommand}">
 
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Grid>
-                            <!-- Толстая невидимая зона клика -->
-                            <Polyline Points="{Binding RoutePoints}"
+            <Canvas x:Name="EditorCanvas"
+        Width="{Binding CanvasWidth}"
+        Height="{Binding CanvasHeight}"
+            Background="Transparent"
+            behaviors:EditorCanvasBehavior.CanvasClickCommand="{Binding CanvasClickCommand}"
+            behaviors:EditorCanvasBehavior.MouseMoveCommand="{Binding CanvasMouseMoveCommand}">
+
+                <Canvas.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform ScaleX="{Binding Zoom}"
+                                ScaleY="{Binding Zoom}" />
+                        <TranslateTransform X="{Binding PanX}"
+                                    Y="{Binding PanY}" />
+                    </TransformGroup>
+                </Canvas.RenderTransform>
+                <!-- Линии снизу -->
+                <ItemsControl ItemsSource="{Binding Connections}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <!-- Толстая невидимая зона клика -->
+                                <Polyline Points="{Binding RoutePoints}"
                           Stroke="Transparent"
                           StrokeThickness="12"
                           Cursor="Hand">
-                                <Polyline.InputBindings>
-                                    <MouseBinding MouseAction="LeftClick"
+                                    <Polyline.InputBindings>
+                                        <MouseBinding MouseAction="LeftClick"
                                       Command="{Binding DataContext.SelectConnectionCommand,
                                                 RelativeSource={RelativeSource AncestorType=UserControl}}"
                                       CommandParameter="{Binding}" />
-                                </Polyline.InputBindings>
-                            </Polyline>
+                                    </Polyline.InputBindings>
+                                </Polyline>
 
-                            <!-- Видимая линия -->
-                            <Polyline Points="{Binding RoutePoints}"
+                                <!-- Видимая линия -->
+                                <Polyline Points="{Binding RoutePoints}"
                           StrokeThickness="2">
-                                <Polyline.Style>
-                                    <Style TargetType="Polyline">
-                                        <Setter Property="Stroke" Value="Black"/>
-                                        <Setter Property="StrokeThickness" Value="2"/>
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding IsSelected}" Value="True">
-                                                <Setter Property="Stroke" Value="DodgerBlue"/>
-                                                <Setter Property="StrokeThickness" Value="3"/>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Polyline.Style>
-                            </Polyline>
-                        </Grid>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+                                    <Polyline.Style>
+                                        <Style TargetType="Polyline">
+                                            <Setter Property="Stroke" Value="Black"/>
+                                            <Setter Property="StrokeThickness" Value="2"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                    <Setter Property="Stroke" Value="DodgerBlue"/>
+                                                    <Setter Property="StrokeThickness" Value="3"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Polyline.Style>
+                                </Polyline>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
 
-            <!-- Фантомная линия должна быть отдельно -->
-            <Polyline Points="{Binding PreviewRoutePoints}"
+                <!-- Фантомная линия должна быть отдельно -->
+                <Polyline Points="{Binding PreviewRoutePoints}"
           Stroke="Gray"
           StrokeThickness="2"
           StrokeDashArray="5 3"
           Visibility="{Binding IsConnectionPreviewVisible,
                        Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
-            <ItemsControl ItemsSource="{Binding Connections}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <Canvas />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
+                <ItemsControl ItemsSource="{Binding Connections}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
 
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Ellipse Width="12"
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Ellipse Width="12"
 Height="12"
 Fill="DodgerBlue"
 Stroke="White"
@@ -108,115 +146,116 @@ behaviors:ConnectionEndpointDragBehavior.InteractionCanvas="{Binding ElementName
 behaviors:ConnectionEndpointDragBehavior.MouseDownCommand="{Binding DataContext.ConnectionEndMouseDownCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
 behaviors:ConnectionEndpointDragBehavior.MouseMoveCommand="{Binding DataContext.ConnectionEndMouseMoveCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
 behaviors:ConnectionEndpointDragBehavior.MouseUpCommand="{Binding DataContext.ConnectionEndMouseUpCommand, RelativeSource={RelativeSource AncestorType=UserControl}}">
-                            <Ellipse.RenderTransform>
-                                <TranslateTransform X="{Binding EndHandle.X}"
+                                <Ellipse.RenderTransform>
+                                    <TranslateTransform X="{Binding EndHandle.X}"
                    Y="{Binding EndHandle.Y}" />
-                            </Ellipse.RenderTransform>
-                        </Ellipse>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+                                </Ellipse.RenderTransform>
+                            </Ellipse>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
 
-            
-            <!-- Блоки -->
-            <ItemsControl ItemsSource="{Binding Blocks}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <Canvas />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
 
-                <ItemsControl.ItemContainerStyle>
-                    <Style TargetType="ContentPresenter">
-                        <Setter Property="Canvas.Left" Value="{Binding X}" />
-                        <Setter Property="Canvas.Top" Value="{Binding Y}" />
-                    </Style>
-                </ItemsControl.ItemContainerStyle>
+                <!-- Блоки -->
+                <ItemsControl ItemsSource="{Binding Blocks}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
 
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <ContentControl Content="{Binding}">
-                            <ContentControl.Style>
-                                <Style TargetType="ContentControl">
-                                    <Setter Property="ContentTemplate"
+                    <ItemsControl.ItemContainerStyle>
+                        <Style TargetType="ContentPresenter">
+                            <Setter Property="Canvas.Left" Value="{Binding X}" />
+                            <Setter Property="Canvas.Top" Value="{Binding Y}" />
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <ContentControl Content="{Binding}">
+                                <ContentControl.Style>
+                                    <Style TargetType="ContentControl">
+                                        <Setter Property="ContentTemplate"
                                             Value="{StaticResource ProcessTemplate}" />
 
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Type}"
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Type}"
                                                      Value="{x:Static enums:BlockType.Decision}">
-                                            <Setter Property="ContentTemplate"
+                                                <Setter Property="ContentTemplate"
                                                     Value="{StaticResource DecisionTemplate}" />
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Type}"
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Type}"
              Value="{x:Static enums:BlockType.Loop}">
-                                            <Setter Property="ContentTemplate"
+                                                <Setter Property="ContentTemplate"
             Value="{StaticResource LoopTemplate}" />
-                                        </DataTrigger>
+                                            </DataTrigger>
 
-                                        <DataTrigger Binding="{Binding Type}"
+                                            <DataTrigger Binding="{Binding Type}"
              Value="{x:Static enums:BlockType.Procedure}">
-                                            <Setter Property="ContentTemplate"
+                                                <Setter Property="ContentTemplate"
             Value="{StaticResource ProcedureTemplate}" />
-                                        </DataTrigger>
+                                            </DataTrigger>
 
-                                        <DataTrigger Binding="{Binding Type}"
+                                            <DataTrigger Binding="{Binding Type}"
              Value="{x:Static enums:BlockType.Reference}">
-                                            <Setter Property="ContentTemplate"
+                                                <Setter Property="ContentTemplate"
             Value="{StaticResource ReferenceTemplate}" />
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Type}"
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Type}"
              Value="{x:Static enums:BlockType.Start}">
-                                            <Setter Property="ContentTemplate"
+                                                <Setter Property="ContentTemplate"
             Value="{StaticResource StartEndTemplate}" />
-                                        </DataTrigger>
+                                            </DataTrigger>
 
-                                        <DataTrigger Binding="{Binding Type}"
+                                            <DataTrigger Binding="{Binding Type}"
              Value="{x:Static enums:BlockType.End}">
-                                            <Setter Property="ContentTemplate"
+                                                <Setter Property="ContentTemplate"
             Value="{StaticResource StartEndTemplate}" />
-                                        </DataTrigger>
+                                            </DataTrigger>
 
-                                        <DataTrigger Binding="{Binding Type}"
+                                            <DataTrigger Binding="{Binding Type}"
                                                      Value="{x:Static enums:BlockType.StartEnd}">
-                                            <Setter Property="ContentTemplate"
+                                                <Setter Property="ContentTemplate"
                                                     Value="{StaticResource StartEndTemplate}" />
-                                        </DataTrigger>
+                                            </DataTrigger>
 
-                                        <DataTrigger Binding="{Binding Type}"
+                                            <DataTrigger Binding="{Binding Type}"
                                                      Value="{x:Static enums:BlockType.InputOutput}">
-                                            <Setter Property="ContentTemplate"
+                                                <Setter Property="ContentTemplate"
                                                     Value="{StaticResource InputOutputTemplate}" />
-                                        </DataTrigger>
+                                            </DataTrigger>
 
-                                        <DataTrigger Binding="{Binding Type}"
+                                            <DataTrigger Binding="{Binding Type}"
                                                      Value="{x:Static enums:BlockType.Process}">
-                                            <Setter Property="ContentTemplate"
+                                                <Setter Property="ContentTemplate"
                                                     Value="{StaticResource ProcessTemplate}" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </ContentControl.Style>
-                        </ContentControl>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ContentControl.Style>
+                            </ContentControl>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
 
-            <!-- Стрелки сверху -->
-            <ItemsControl ItemsSource="{Binding Connections}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <Canvas />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
+                <!-- Стрелки сверху -->
+                <ItemsControl ItemsSource="{Binding Connections}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
 
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Polygon Points="{Binding ArrowPoints}"
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Polygon Points="{Binding ArrowPoints}"
                      Fill="Black"/>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-            
-        </Canvas>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+            </Canvas>
+        </Grid>
     </Border>
 </UserControl>

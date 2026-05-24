@@ -67,7 +67,7 @@ namespace UICharts.Desktop.Behaviors
                 e.GetPosition(canvas),
                 e.ClickCount,
                 Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift),
-                new Size (canvas.ActualWidth, canvas.ActualHeight));
+                new Size (canvas.Width, canvas.Height));
 
             var command = GetMouseDownCommand(element);
 

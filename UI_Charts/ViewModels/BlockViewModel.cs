@@ -32,6 +32,7 @@ namespace UICharts.Desktop.ViewModels
                     RaisePropertyChanged(nameof(Width));
                     RaisePropertyChanged(nameof(Height));
                     RaisePropertyChanged(nameof(ConnectionPoints));
+                    RaisePropertyChanged(nameof(LocalConnectionPoints));
                 }
             }
         }
@@ -64,6 +65,18 @@ namespace UICharts.Desktop.ViewModels
 
             return min.Side;
         }
+
+        private bool showConnectionPoints;
+
+        public bool ShowConnectionPoints
+        {
+            get => showConnectionPoints;
+            set => SetProperty(ref showConnectionPoints, value);
+        }
+        public IEnumerable<Point> LocalConnectionPoints =>
+    Figure.ConnectionPoints.Select(point => new Point(
+        Width * point.XRatio,
+        Height * point.YRatio));
 
         public double X
         {
@@ -103,6 +116,7 @@ namespace UICharts.Desktop.ViewModels
 
                     RaisePropertyChanged();
                     RaisePropertyChanged(nameof(ConnectionPoints));
+                    RaisePropertyChanged(nameof(LocalConnectionPoints));
                 }
             }
         }
@@ -118,6 +132,7 @@ namespace UICharts.Desktop.ViewModels
 
                     RaisePropertyChanged();
                     RaisePropertyChanged(nameof(ConnectionPoints));
+                    RaisePropertyChanged(nameof(LocalConnectionPoints));
                 }
             }
         }

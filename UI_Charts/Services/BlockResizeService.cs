@@ -30,6 +30,8 @@ namespace UICharts.Desktop.Services
             var dx = mousePosition.X - startMouse.X;
             var dy = mousePosition.Y - startMouse.Y;
 
+            const double gridSize = 20;
+
             var newWidth = Math.Max(MinWidth, startWidth + dx);
             var newHeight = Math.Max(MinHeight, startHeight + dy);
 
@@ -38,6 +40,13 @@ namespace UICharts.Desktop.Services
 
             currentBlock.Width = Math.Min(newWidth, maxWidth);
             currentBlock.Height = Math.Min(newHeight, maxHeight);
+            currentBlock.Width = Snap(newWidth, gridSize);
+            currentBlock.Height = Snap(newHeight, gridSize);
+        }
+
+        private double Snap(double value, double gridSize)
+        {
+            return Math.Round(value / gridSize) * gridSize;
         }
 
         public void EndResize()

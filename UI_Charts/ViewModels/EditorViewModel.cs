@@ -116,6 +116,49 @@ namespace UICharts.Desktop.ViewModels
         private ConnectionViewModel? draggedConnection;
         private bool isDraggingConnectionEnd;
 
+        private double zoom = 1.0;
+
+        public double Zoom
+        {
+            get => zoom;
+            set => SetProperty(ref zoom, value);
+        }
+
+        private double panX;
+        public double PanX
+        {
+            get => panX;
+            set => SetProperty(ref panX, value);
+        }
+
+        private bool isPanning;
+        private Point panStartPoint;
+        private double startPanX;
+        private double startPanY;
+
+        private double panY;
+        public double PanY
+        {
+            get => panY;
+            set => SetProperty(ref panY, value);
+        }
+
+        private double canvasWidth = 10000;
+        public double CanvasWidth
+        {
+            get => canvasWidth;
+            set => SetProperty(ref canvasWidth, value);
+        }
+
+        private double canvasHeight = 8000;
+        public double CanvasHeight
+        {
+            get => canvasHeight;
+            set => SetProperty(ref canvasHeight, value);
+        }
+
+        public DelegateCommand<int?> MouseWheelCommand { get; }
+
         public DelegateCommand<System.Windows.Point?> CanvasClickCommand { get; }
         public DelegateCommand<BlockViewModel> SelectBlockCommand { get; }
         public DelegateCommand<BlockViewModel> BeginEditBlockCommand { get; }
@@ -133,6 +176,9 @@ namespace UICharts.Desktop.ViewModels
         public DelegateCommand<ConnectionViewModel> ConnectionEndMouseDownCommand { get; }
         public DelegateCommand<Point?> ConnectionEndMouseMoveCommand { get; }
         public DelegateCommand<Point?> ConnectionEndMouseUpCommand { get; }
+        public DelegateCommand<Point?> PanMouseDownCommand { get; }
+        public DelegateCommand<Point?> PanMouseMoveCommand { get; }
+        public DelegateCommand PanMouseUpCommand { get; }
         public EditorViewModel(
             IBlockDragService dragService,
             IConnectionService connectionService,
@@ -175,6 +221,10 @@ namespace UICharts.Desktop.ViewModels
             ConnectionEndMouseDownCommand = new DelegateCommand<ConnectionViewModel>(OnConnectionEndMouseDown);
             ConnectionEndMouseMoveCommand = new DelegateCommand<Point?>(OnConnectionEndMouseMove);
             ConnectionEndMouseUpCommand = new DelegateCommand<Point?>(OnConnectionEndMouseUp);
+            MouseWheelCommand = new DelegateCommand<int?>(OnMouseWheel);
+            PanMouseDownCommand = new DelegateCommand<Point?>(OnPanMouseDown);
+            PanMouseMoveCommand = new DelegateCommand<Point?>(OnPanMouseMove);
+            PanMouseUpCommand = new DelegateCommand(OnPanMouseUp);
         }
 
 
@@ -185,6 +235,62 @@ namespace UICharts.Desktop.ViewModels
             SelectedBlock = null;
 
             mappingService.Map(CurrentDiagram, Blocks, Connections);
+        }
+        private void OnPanMouseDown(Point? point)
+        {
+            if (point == null)
+                return;
+
+            isPanning = true;
+            panStartPoint = point.Value;
+
+            startPanX = PanX;
+            startPanY = PanY;
+        }
+
+        private void OnPanMouseMove(Point? point)
+        {
+            if (!isPanning || point == null)
+                return;
+
+            var dx = point.Value.X - panStartPoint.X;
+            var dy = point.Value.Y - panStartPoint.Y;
+
+            PanX = startPanX + dx;
+            PanY = startPanY + dy;
+
+            ClampPan();
+        }
+
+        private void OnPanMouseUp()
+        {
+            isPanning = false;
+        }
+        private void ClampPan()
+        {
+            var minPanX = -CanvasWidth * Zoom + 800;
+            var minPanY = -CanvasHeight * Zoom + 600;
+
+            PanX = Math.Min(0, Math.Max(minPanX, PanX));
+            PanY = Math.Min(0, Math.Max(minPanY, PanY));
+        }
+
+
+        private void OnMouseWheel(int? delta)
+        {
+            if (delta == null)
+                return;
+
+            const double zoomStep = 0.1;
+            const double minZoom = 0.5;
+            const double maxZoom = 2.0;
+
+            if (delta > 0)
+                Zoom += zoomStep;
+            else
+                Zoom -= zoomStep;
+
+            Zoom = Math.Max(minZoom, Math.Min(maxZoom, Zoom));
         }
 
         private void OnCanvasMouseMove(Point? point)
@@ -219,13 +325,19 @@ namespace UICharts.Desktop.ViewModels
             if (selectionService.IsEditingAny(Blocks))
                 return;
 
+            if (point.Value.X < 0 || point.Value.Y < 0)
+                return;
+
+            if (point.Value.X > CanvasWidth || point.Value.Y > CanvasHeight)
+                return;
+
             var figure = new BlockFigureFactory()
             .GetFigure(SelectedFigure.Type);
 
             var model = new BlockModel
             {
-                X = point.Value.X,
-                Y = point.Value.Y,
+                X = Snap(point.Value.X),
+                Y = Snap(point.Value.Y),
                 Width = figure.DefaultWidth,
                 Height = figure.DefaultHeight,
                 Text = SelectedFigure.Name,
@@ -289,11 +401,13 @@ namespace UICharts.Desktop.ViewModels
                 PreviewEndPoint = points.End;
 
                 IsConnectionPreviewVisible = true;
+                ShowAllConnectionPoints();
             }
             else
             {
                 previewStartBlock = null;
                 IsConnectionPreviewVisible = false;
+                HideAllConnectionPoints();
             }
 
             connectionService.HandleConnectionClick(
@@ -404,6 +518,12 @@ namespace UICharts.Desktop.ViewModels
             SelectedBlock = null;
         }
 
+        private double Snap(double value)
+        {
+            const double gridSize = 20;
+            return Math.Round(value / gridSize) * gridSize;
+        }
+
         private ConnectionSide GetPreviewSide(Point point, Point target)
         {
             var dx = target.X - point.X;
@@ -461,7 +581,7 @@ namespace UICharts.Desktop.ViewModels
         {
             draggedConnection = connection;
             isDraggingConnectionEnd = true;
-
+            ShowAllConnectionPoints();
             OnSelectConnection(connection);
         }
 
@@ -494,6 +614,19 @@ namespace UICharts.Desktop.ViewModels
             draggedConnection = null;
             isDraggingConnectionEnd = false;
             IsConnectionPreviewVisible = false;
+            HideAllConnectionPoints();
+        }
+
+        private void ShowAllConnectionPoints()
+        {
+            foreach (var block in Blocks)
+                block.ShowConnectionPoints = true;
+        }
+
+        private void HideAllConnectionPoints()
+        {
+            foreach (var block in Blocks)
+                block.ShowConnectionPoints = false;
         }
     }
 }
