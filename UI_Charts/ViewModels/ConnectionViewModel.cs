@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Media;
@@ -12,38 +13,84 @@ namespace UICharts.Desktop.ViewModels
     public class ConnectionViewModel : BindableBase
     {
         private readonly ConnectionModel model;
+        private readonly ObservableCollection<BlockViewModel> blocks;
 
         private readonly IConnectionRoutingService routingService;
 
         public ConnectionViewModel(
-            IConnectionRoutingService routingService,
-            ConnectionModel model,
-            BlockViewModel from,
-            BlockViewModel to)
+    IConnectionRoutingService routingService,
+    ConnectionModel model,
+    BlockViewModel from,
+    BlockViewModel to,
+    ObservableCollection<BlockViewModel> blocks)
         {
             this.model = model;
             this.routingService = routingService;
+            this.blocks = blocks;
+
+            BendPoints = new ObservableCollection<RoutePointModel>(Model.BendPoints);
 
             From = from;
             To = to;
 
-            From.PropertyChanged += (_, __) => Update();
-            To.PropertyChanged += (_, __) => Update();
             From.PropertyChanged += OnBlockChanged;
             To.PropertyChanged += OnBlockChanged;
-
         }
 
-        public BlockViewModel From { get; }
+        private BlockViewModel from;
+
+        public BlockViewModel From
+        {
+            get => from;
+            private set => SetProperty(ref from, value);
+        }
 
         private BlockViewModel to;
+        public string Text
+        {
+            get => Model.Text;
+            set
+            {
+                if (Model.Text != value)
+                {
+                    Model.Text = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public Point LabelPosition
+        {
+            get
+            {
+                var route = RoutePoints;
+
+                if (route.Count == 0)
+                    return new Point(0, 0);
+
+                var middle = route[route.Count / 2];
+
+                return new Point(middle.X, middle.Y);
+            }
+        }
+        public ObservableCollection<RoutePointModel> BendPoints { get; }
 
         public BlockViewModel To
         {
             get => to;
             private set => SetProperty(ref to, value);
         }
-        public Point StartHandle => new Point(X1, Y1);
+        public Point StartHandle
+        {
+            get
+            {
+                const double handleOffset = 18;
+
+                return new Point(
+                    X1 + UnitX * handleOffset - 6,
+                    Y1 + UnitY * handleOffset - 6);
+            }
+        }
 
         public Point EndHandle
         {
@@ -65,12 +112,28 @@ namespace UICharts.Desktop.ViewModels
 
 
         public ConnectionModel Model => model;
-        private IReadOnlyList<Point> Route =>
-            routingService.BuildRoute(
-                new Point(X1, Y1),
-                StartSide,
-                new Point(X2, Y2),
-                EndSide);
+        private IReadOnlyList<Point> Route
+        {
+            get
+            {
+                const double obstaclePadding = 40;
+
+                var obstacles = blocks
+                    .Select(block => new Rect(
+                        block.X - obstaclePadding,
+                        block.Y - obstaclePadding,
+                        block.Width + obstaclePadding * 2,
+                        block.Height + obstaclePadding * 2));
+
+                return routingService.BuildRoute(
+                    new Point(X1, Y1),
+                    StartSide,
+                    new Point(X2, Y2),
+                    EndSide,
+                    Model.BendPoints,
+                    obstacles);
+            }
+        }
 
         public double X1 => From.GetConnectionPointByIndex(Model.FromPointIndex).X;
         public double Y1 => From.GetConnectionPointByIndex(Model.FromPointIndex).Y;
@@ -142,7 +205,115 @@ namespace UICharts.Desktop.ViewModels
                 .First();
         }
 
-        private void Update()
+        public void ChangeFrom(BlockViewModel newFrom)
+        {
+            From.PropertyChanged -= OnBlockChanged;
+
+            From = newFrom;
+            Model.FromBlockId = newFrom.Model.Id;
+
+            From.PropertyChanged += OnBlockChanged;
+
+            Update();
+        }
+
+        private double GetDistance(Point a, Point b)
+        {
+            var dx = a.X - b.X;
+            var dy = a.Y - b.Y;
+
+            return Math.Sqrt(dx * dx + dy * dy);
+        }
+
+        private double GetDistanceToSegment(Point point, Point a, Point b)
+        {
+            var dx = b.X - a.X;
+            var dy = b.Y - a.Y;
+
+            if (Math.Abs(dx) < 0.001 && Math.Abs(dy) < 0.001)
+                return GetDistance(point, a);
+
+            var t =
+                ((point.X - a.X) * dx + (point.Y - a.Y) * dy) /
+                (dx * dx + dy * dy);
+
+            t = Math.Max(0, Math.Min(1, t));
+
+            var projection = new Point(
+                a.X + t * dx,
+                a.Y + t * dy);
+
+            return GetDistance(point, projection);
+        }
+
+        private int FindNearestSegmentIndex(List<Point> route, Point point)
+        {
+            var bestIndex = 0;
+            var bestDistance = double.MaxValue;
+
+            for (int i = 0; i < route.Count - 1; i++)
+            {
+                var distance = GetDistanceToSegment(
+                    point,
+                    route[i],
+                    route[i + 1]);
+
+                if (distance < bestDistance)
+                {
+                    bestDistance = distance;
+                    bestIndex = i;
+                }
+            }
+
+            return bestIndex;
+        }
+
+        public void InsertBendPoint(Point point)
+        {
+            var route = Route.ToList();
+
+            if (route.Count < 2)
+            {
+                AddBendPoint(point);
+                return;
+            }
+
+            var nearestSegmentIndex = FindNearestSegmentIndex(route, point);
+
+            var bendPoint = new RoutePointModel
+            {
+                X = point.X,
+                Y = point.Y
+            };
+
+            var insertIndex = Math.Max(0, nearestSegmentIndex - 1);
+
+            Model.BendPoints.Insert(
+                Math.Min(insertIndex, Model.BendPoints.Count),
+                bendPoint);
+
+            BendPoints.Insert(
+                Math.Min(insertIndex, BendPoints.Count),
+                bendPoint);
+
+            Update();
+        }
+
+        public void AddBendPoint(Point point)
+        {
+            var bendPoint = new RoutePointModel
+            {
+                X = point.X,
+                Y = point.Y
+            };
+
+            Model.BendPoints.Add(bendPoint);
+            BendPoints.Add(bendPoint);
+
+            Update();
+        }
+
+        public void Update()
         {
             RaisePropertyChanged(nameof(X1));
             RaisePropertyChanged(nameof(Y1));
@@ -158,6 +329,9 @@ namespace UICharts.Desktop.ViewModels
 
             RaisePropertyChanged(nameof(StartHandle));
             RaisePropertyChanged(nameof(EndHandle));
+
+            RaisePropertyChanged(nameof(LabelPosition));
+            RaisePropertyChanged(nameof(Text));
         }
 
         public void ChangeTo(BlockViewModel newTo)

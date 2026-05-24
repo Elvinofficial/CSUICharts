@@ -25,6 +25,7 @@ namespace UICharts.Desktop.Services
                 BlockViewModel block,
                 Point mousePosition,
                 DiagramModel? currentDiagram,
+                ObservableCollection<BlockViewModel> blocks,
                 ObservableCollection<ConnectionViewModel> connections)
         {
             if (currentDiagram == null)
@@ -61,7 +62,8 @@ namespace UICharts.Desktop.Services
                 routingService,
                 model,
                 connectionStartBlock,
-                block);
+                block,
+                blocks);
 
             currentDiagram.Connections.Add(model);
             connections.Add(vm);
@@ -111,7 +113,7 @@ namespace UICharts.Desktop.Services
 
 
         }
-        private int GetNearestConnectionPointIndex(BlockViewModel block, Point target)
+        public int GetNearestConnectionPointIndex(BlockViewModel block, Point target)
         {
             var points = block.ConnectionPoints.ToList();
 

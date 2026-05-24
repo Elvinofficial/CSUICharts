@@ -86,9 +86,12 @@
                             <Grid>
                                 <!-- Толстая невидимая зона клика -->
                                 <Polyline Points="{Binding RoutePoints}"
-                          Stroke="Transparent"
-                          StrokeThickness="12"
-                          Cursor="Hand">
+          Stroke="#01000000"
+          StrokeThickness="18"
+          Cursor="Hand"
+                                          ToolTip="{Binding Text}"
+          behaviors:ConnectionClickBehavior.InteractionCanvas="{Binding ElementName=EditorCanvas}"
+          behaviors:ConnectionClickBehavior.DoubleClickCommand="{Binding DataContext.AddConnectionBendPointCommand, RelativeSource={RelativeSource AncestorType=UserControl}}">
                                     <Polyline.InputBindings>
                                         <MouseBinding MouseAction="LeftClick"
                                       Command="{Binding DataContext.SelectConnectionCommand,
@@ -99,7 +102,9 @@
 
                                 <!-- Видимая линия -->
                                 <Polyline Points="{Binding RoutePoints}"
-                          StrokeThickness="2">
+                          StrokeThickness="2"
+                                          behaviors:ConnectionClickBehavior.InteractionCanvas="{Binding ElementName=EditorCanvas}"
+                                          behaviors:ConnectionClickBehavior.DoubleClickCommand="{Binding DataContext.AddConnectionBendPointCommand, RelativeSource={RelativeSource AncestorType=UserControl}}">
                                     <Polyline.Style>
                                         <Style TargetType="Polyline">
                                             <Setter Property="Stroke" Value="Black"/>
@@ -118,6 +123,71 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
 
+                <ItemsControl ItemsSource="{Binding Connections}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+
+                            <ItemsControl ItemsSource="{Binding BendPoints}"
+              Visibility="{Binding IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <Canvas />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+
+                                <ItemsControl.ItemContainerStyle>
+                                    <Style TargetType="ContentPresenter">
+
+                                        <Setter Property="Canvas.Left"
+                                Value="{Binding X}" />
+
+                                        <Setter Property="Canvas.Top"
+                                Value="{Binding Y}" />
+
+                                    </Style>
+                                </ItemsControl.ItemContainerStyle>
+
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+
+                                        <Ellipse Width="12"
+         Height="12"
+         Fill="Orange"
+         Stroke="Black"
+         StrokeThickness="1"
+         Margin="-6,-6,0,0"
+         Cursor="SizeAll"
+         Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"
+         behaviors:BendPointDragBehavior.InteractionCanvas="{Binding ElementName=EditorCanvas}"
+         behaviors:BendPointDragBehavior.MouseDownCommand="{Binding DataContext.BendPointMouseDownCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+         behaviors:BendPointDragBehavior.MouseMoveCommand="{Binding DataContext.BendPointMouseMoveCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+         behaviors:BendPointDragBehavior.MouseUpCommand="{Binding DataContext.BendPointMouseUpCommand, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                                            <Ellipse.ContextMenu>
+                                                <ContextMenu>
+                                                    <MenuItem Header="Удалить точку"
+                  Command="{Binding PlacementTarget.Tag.DeleteBendPointCommand,
+                                    RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                  CommandParameter="{Binding}"/>
+                                                </ContextMenu>
+                                            </Ellipse.ContextMenu>
+                                        </Ellipse>
+
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+
+                            </ItemsControl>
+
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
                 <!-- Фантомная линия должна быть отдельно -->
                 <Polyline Points="{Binding PreviewRoutePoints}"
           Stroke="Gray"
@@ -125,6 +195,37 @@
           StrokeDashArray="5 3"
           Visibility="{Binding IsConnectionPreviewVisible,
                        Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                <!-- Маркеры начала выбранной связи -->
+                <ItemsControl ItemsSource="{Binding Connections}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                    <ItemsControl.ItemContainerStyle>
+                        <Style TargetType="ContentPresenter">
+                            <Setter Property="Canvas.Left" Value="{Binding StartHandle.X}" />
+                            <Setter Property="Canvas.Top" Value="{Binding StartHandle.Y}" />
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Ellipse Width="12"
+                     Height="12"
+                     Fill="MediumPurple"
+                     Stroke="White"
+                     StrokeThickness="2"
+                     Cursor="Hand"
+                     Visibility="{Binding IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}"
+                     behaviors:ConnectionEndpointDragBehavior.InteractionCanvas="{Binding ElementName=EditorCanvas}"
+                     behaviors:ConnectionEndpointDragBehavior.MouseDownCommand="{Binding DataContext.ConnectionStartMouseDownCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                     behaviors:ConnectionEndpointDragBehavior.MouseMoveCommand="{Binding DataContext.ConnectionStartMouseMoveCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                     behaviors:ConnectionEndpointDragBehavior.MouseUpCommand="{Binding DataContext.ConnectionStartMouseUpCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
 
                 <ItemsControl ItemsSource="{Binding Connections}">
                     <ItemsControl.ItemsPanel>
@@ -154,7 +255,39 @@ behaviors:ConnectionEndpointDragBehavior.MouseUpCommand="{Binding DataContext.Co
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
+                <!-- Подписи связей -->
+                <ItemsControl ItemsSource="{Binding Connections}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
 
+                    <ItemsControl.ItemContainerStyle>
+                        <Style TargetType="ContentPresenter">
+                            <Setter Property="Canvas.Left" Value="{Binding LabelPosition.X}" />
+                            <Setter Property="Canvas.Top" Value="{Binding LabelPosition.Y}" />
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBox Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}"
+                    MinWidth="40"
+MinHeight="22"
+Padding="6,2"
+                     FontSize="12"
+                     TextAlignment="Center"
+                     Background="#EEFFFFFF"
+                     BorderBrush="Gray"
+                     BorderThickness="1"
+                                     AcceptsReturn="True"
+TextWrapping="Wrap"
+                                     VerticalContentAlignment="Center"
+                     Visibility="{Binding IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
 
                 <!-- Блоки -->
                 <ItemsControl ItemsSource="{Binding Blocks}">

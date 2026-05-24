@@ -10,11 +10,14 @@ namespace UICharts.Desktop.Services.Interfaces
         void HandleConnectionClick(BlockViewModel block,
                 Point mousePosition,
                 DiagramModel? currentDiagram,
+                ObservableCollection<BlockViewModel> blocks,
                 ObservableCollection<ConnectionViewModel> connections);
         void Reset();
         (Point Start, Point End) GetPreviewPoints(
             BlockViewModel fromBlock,
             BlockViewModel? targetBlock,
             Point mousePoint);
+
+        int GetNearestConnectionPointIndex(BlockViewModel block, Point target);
     }
 }

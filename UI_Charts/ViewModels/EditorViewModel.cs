@@ -79,6 +79,9 @@ namespace UICharts.Desktop.ViewModels
         }
 
         private Point previewStartPoint;
+        private int previewStartPointIndex;
+        private int previewTargetPointIndex;
+        private BlockViewModel? previewTargetBlock;
         public Point PreviewStartPoint
         {
             get => previewStartPoint;
@@ -157,6 +160,9 @@ namespace UICharts.Desktop.ViewModels
             set => SetProperty(ref canvasHeight, value);
         }
 
+        private RoutePointModel? draggedBendPoint;
+        private ConnectionViewModel? draggedBendConnection;
+
         public DelegateCommand<int?> MouseWheelCommand { get; }
 
         public DelegateCommand<System.Windows.Point?> CanvasClickCommand { get; }
@@ -179,6 +185,14 @@ namespace UICharts.Desktop.ViewModels
         public DelegateCommand<Point?> PanMouseDownCommand { get; }
         public DelegateCommand<Point?> PanMouseMoveCommand { get; }
         public DelegateCommand PanMouseUpCommand { get; }
+        public DelegateCommand<ConnectionMouseEventArgs> AddConnectionBendPointCommand { get; }
+        public DelegateCommand<RoutePointModel> BendPointMouseDownCommand { get; }
+        public DelegateCommand<Point?> BendPointMouseMoveCommand { get; }
+        public DelegateCommand BendPointMouseUpCommand { get; }
+        public DelegateCommand<RoutePointModel> DeleteBendPointCommand { get; }
+        public DelegateCommand<ConnectionViewModel> ConnectionStartMouseDownCommand { get; }
+        public DelegateCommand<Point?> ConnectionStartMouseMoveCommand { get; }
+        public DelegateCommand<Point?> ConnectionStartMouseUpCommand { get; }
         public EditorViewModel(
             IBlockDragService dragService,
             IConnectionService connectionService,
@@ -225,6 +239,16 @@ namespace UICharts.Desktop.ViewModels
             PanMouseDownCommand = new DelegateCommand<Point?>(OnPanMouseDown);
             PanMouseMoveCommand = new DelegateCommand<Point?>(OnPanMouseMove);
             PanMouseUpCommand = new DelegateCommand(OnPanMouseUp);
+            AddConnectionBendPointCommand =
+    new DelegateCommand<ConnectionMouseEventArgs>(OnAddConnectionBendPoint);
+            BendPointMouseDownCommand = new DelegateCommand<RoutePointModel>(OnBendPointMouseDown);
+            BendPointMouseMoveCommand = new DelegateCommand<Point?>(OnBendPointMouseMove);
+            BendPointMouseUpCommand = new DelegateCommand(OnBendPointMouseUp);
+            DeleteBendPointCommand =
+    new DelegateCommand<RoutePointModel>(OnDeleteBendPoint);
+            ConnectionStartMouseDownCommand = new DelegateCommand<ConnectionViewModel>(OnConnectionStartMouseDown);
+            ConnectionStartMouseMoveCommand = new DelegateCommand<Point?>(OnConnectionStartMouseMove);
+            ConnectionStartMouseUpCommand = new DelegateCommand<Point?>(OnConnectionStartMouseUp);
         }
 
 
@@ -235,6 +259,105 @@ namespace UICharts.Desktop.ViewModels
             SelectedBlock = null;
 
             mappingService.Map(CurrentDiagram, Blocks, Connections);
+        }
+
+        private void OnConnectionStartMouseDown(ConnectionViewModel connection)
+        {
+            draggedConnection = connection;
+            isDraggingConnectionEnd = false;
+
+            OnSelectConnection(connection);
+        }
+
+        private void OnConnectionStartMouseMove(Point? point)
+        {
+            if (draggedConnection == null || point == null)
+                return;
+
+            PreviewStartPoint = point.Value;
+            PreviewEndPoint = draggedConnection.EndHandle;
+            IsConnectionPreviewVisible = true;
+        }
+
+        private void OnConnectionStartMouseUp(Point? point)
+        {
+            if (draggedConnection == null || point == null)
+                return;
+
+            var targetBlock = Blocks.FirstOrDefault(block =>
+                point.Value.X >= block.X &&
+                point.Value.X <= block.X + block.Width &&
+                point.Value.Y >= block.Y &&
+                point.Value.Y <= block.Y + block.Height);
+
+            if (targetBlock != null && targetBlock != draggedConnection.To)
+            {
+                draggedConnection.ChangeFrom(targetBlock);
+            }
+
+            draggedConnection = null;
+            IsConnectionPreviewVisible = false;
+        }
+
+        private Point ClampToCanvas(Point point)
+        {
+            var x = Math.Max(0, Math.Min(CanvasWidth, point.X));
+            var y = Math.Max(0, Math.Min(CanvasHeight, point.Y));
+
+            return new Point(x, y);
+        }
+        private void OnDeleteBendPoint(RoutePointModel point)
+        {
+            if (point == null)
+                return;
+
+            var connection = Connections
+                .FirstOrDefault(c => c.BendPoints.Contains(point));
+
+            if (connection == null)
+                return;
+
+            connection.Model.BendPoints.Remove(point);
+            connection.BendPoints.Remove(point);
+
+            connection.Update();
+        }
+        private void OnAddConnectionBendPoint(ConnectionMouseEventArgs args)
+        {
+            if (args == null)
+                return;
+
+            args.Connection.InsertBendPoint(Snap(args.MousePosition));
+        }
+        private void OnBendPointMouseDown(RoutePointModel point)
+        {
+            draggedBendPoint = point;
+
+            draggedBendConnection = Connections
+                .FirstOrDefault(connection => connection.BendPoints.Contains(point));
+
+            if (draggedBendConnection != null)
+                OnSelectConnection(draggedBendConnection);
+        }
+
+        private void OnBendPointMouseMove(Point? point)
+        {
+            if (draggedBendPoint == null || draggedBendConnection == null || point == null)
+                return;
+
+            var clampedPoint = ClampToCanvas(point.Value);
+            var snappedPoint = Snap(clampedPoint);
+
+            draggedBendPoint.X = snappedPoint.X;
+            draggedBendPoint.Y = snappedPoint.Y;
+
+            draggedBendConnection.Update();
+        }
+
+        private void OnBendPointMouseUp()
+        {
+            draggedBendPoint = null;
+            draggedBendConnection = null;
         }
         private void OnPanMouseDown(Point? point)
         {
@@ -303,22 +426,37 @@ namespace UICharts.Desktop.ViewModels
 
             var mousePoint = point.Value;
 
-            var targetBlock = Blocks
+            previewTargetBlock = Blocks
                 .Where(block => block != previewStartBlock)
                 .FirstOrDefault(block =>
                     mousePoint.X >= block.X &&
                     mousePoint.X <= block.X + block.Width &&
                     mousePoint.Y >= block.Y &&
                     mousePoint.Y <= block.Y + block.Height);
-            var points = connectionService.GetPreviewPoints(
-                previewStartBlock,
-                targetBlock,
-                mousePoint);
-            PreviewStartPoint = points.Start;
-            PreviewEndPoint = points.End;
+
+            PreviewStartPoint =
+                previewStartBlock.GetConnectionPointByIndex(previewStartPointIndex);
+
+            if (previewTargetBlock != null)
+            {
+                previewTargetPointIndex =
+                    connectionService.GetNearestConnectionPointIndex(
+                        previewTargetBlock,
+                        mousePoint);
+
+                PreviewEndPoint =
+                    previewTargetBlock.GetConnectionPointByIndex(previewTargetPointIndex);
+            }
+            else
+            {
+                PreviewEndPoint = mousePoint;
+            }
+
+            RaisePropertyChanged(nameof(PreviewRoutePoints));
         }
         private void OnCanvasClick(System.Windows.Point? point)
         {
+            ClearSelection();
             if (point == null || CurrentDiagram == null || SelectedFigure == null)
                 return;
 
@@ -346,21 +484,37 @@ namespace UICharts.Desktop.ViewModels
 
             CurrentDiagram.Blocks.Add(model);
 
+
             var vm = new BlockViewModel(model);
             Blocks.Add(vm);
 
             selectionService.ClearSelection(Blocks);
+            connectionService.Reset();
             vm.IsSelected = true;
             SelectedBlock = vm;
             SelectedFigure = null;
            //selectionService.ClearSelection(Blocks);
         }
+        public void ClearSelection()
+        {
+            if (SelectedBlock != null)
+            {
+                SelectedBlock.IsSelected = false;
+                SelectedBlock = null;
+            }
 
+            if (SelectedConnection != null)
+            {
+                SelectedConnection.IsSelected = false;
+                SelectedConnection = null;
+            }
+        }
         private void OnSelectBlock(BlockViewModel? block)
         {
             if (block == null)
                 return;
 
+            SelectedConnection = null;
             selectionService.SelectBlock(Blocks, block, out var selected);
             SelectedBlock = selected;
         }
@@ -384,21 +538,19 @@ namespace UICharts.Desktop.ViewModels
 
 
 
-        public void HandleConnectionClick(
-            BlockViewModel block,
-            Point mousePosition)
-         {
+        public void HandleConnectionClick(BlockViewModel block, Point mousePosition)
+        {
             if (!IsConnectionPreviewVisible)
             {
                 previewStartBlock = block;
 
-                var points = connectionService.GetPreviewPoints(
-                    previewStartBlock,
-                    null,
-                    mousePosition);
+                previewStartPointIndex =
+                    connectionService.GetNearestConnectionPointIndex(block, mousePosition);
 
-                PreviewStartPoint = points.Start;
-                PreviewEndPoint = points.End;
+                PreviewStartPoint =
+                    block.GetConnectionPointByIndex(previewStartPointIndex);
+
+                PreviewEndPoint = PreviewStartPoint;
 
                 IsConnectionPreviewVisible = true;
                 ShowAllConnectionPoints();
@@ -406,6 +558,8 @@ namespace UICharts.Desktop.ViewModels
             else
             {
                 previewStartBlock = null;
+                previewTargetBlock = null;
+
                 IsConnectionPreviewVisible = false;
                 HideAllConnectionPoints();
             }
@@ -414,6 +568,7 @@ namespace UICharts.Desktop.ViewModels
                 block,
                 mousePosition,
                 CurrentDiagram,
+                Blocks,
                 Connections);
         }
 
@@ -512,16 +667,17 @@ namespace UICharts.Desktop.ViewModels
         {
             resizeService.EndResize();
         }
-        public void ClearSelection()
-        {
-            selectionService.ClearSelection(Blocks);
-            SelectedBlock = null;
-        }
 
-        private double Snap(double value)
+
+        private double Snap(double value, double gridSize = 20)
         {
-            const double gridSize = 20;
             return Math.Round(value / gridSize) * gridSize;
+        }
+        private Point Snap(Point point)
+        {
+            return new Point(
+                Snap(point.X, 10),
+                Snap(point.Y, 10));
         }
 
         private ConnectionSide GetPreviewSide(Point point, Point target)
@@ -545,18 +701,33 @@ namespace UICharts.Desktop.ViewModels
         {
             get
             {
-                if (!IsConnectionPreviewVisible)
+                if (!IsConnectionPreviewVisible || previewStartBlock == null)
                     return new PointCollection();
 
-                var startSide = GetPreviewSide(PreviewStartPoint, PreviewEndPoint);
-                var endSide = GetPreviewSide(PreviewEndPoint, PreviewStartPoint);
+                var startSide =
+                    previewStartBlock.GetConnectionSide(PreviewStartPoint);
+
+                var endSide = previewTargetBlock != null
+                    ? previewTargetBlock.GetConnectionSide(PreviewEndPoint)
+                    : GetPreviewSide(PreviewEndPoint, PreviewStartPoint);
+
+                const double obstaclePadding = 40;
+
+                var obstacles = Blocks
+                    .Select(block => new Rect(
+                        block.X - obstaclePadding,
+                        block.Y - obstaclePadding,
+                        block.Width + obstaclePadding * 2,
+                        block.Height + obstaclePadding * 2));
 
                 return new PointCollection(
                     routingService.BuildRoute(
                         PreviewStartPoint,
                         startSide,
                         PreviewEndPoint,
-                        endSide));
+                        endSide,
+                        Enumerable.Empty<RoutePointModel>(),
+                        obstacles));
             }
         }
         private void OnSelectConnection(ConnectionViewModel connection)

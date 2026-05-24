@@ -11,6 +11,7 @@ namespace UICharts.Core.Models
 
         public int FromPointIndex { get; set; }
         public int ToPointIndex { get; set; }
+        public string Text { get; set; } = "";
 
         public List<RoutePointModel> BendPoints { get; set; } = new();
     }

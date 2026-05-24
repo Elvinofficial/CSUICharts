@@ -47,7 +47,8 @@ namespace UICharts.Desktop.Services
                     routingService,
                     connectionModel,
                     fromVm,
-                    toVm);
+                    toVm,
+                    blocks);
 
                 connections.Add(connectionVm);
             }
