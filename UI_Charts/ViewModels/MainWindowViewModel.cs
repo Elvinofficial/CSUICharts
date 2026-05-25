@@ -182,9 +182,26 @@ namespace UICharts.Desktop.ViewModels
                 return;
             }
 
-            eventAggregator
-                .GetEvent<ExportPngRequestedEvent>()
-                .Publish(canvas);
+            var oldZoom = Editor.Zoom;
+            var oldPanX = Editor.PanX;
+            var oldPanY = Editor.PanY;
+
+            try
+            {
+                Editor.Zoom = 1;
+                Editor.PanX = 0;
+                Editor.PanY = 0;
+
+                eventAggregator
+                    .GetEvent<ExportPngRequestedEvent>()
+                    .Publish(canvas);
+            }
+            finally
+            {
+                Editor.Zoom = oldZoom;
+                Editor.PanX = oldPanX;
+                Editor.PanY = oldPanY;
+            }
         }
 
     }
