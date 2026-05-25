@@ -26,7 +26,7 @@ namespace UICharts.Desktop.Services
             if (canvasSize.Width <= 0 || canvasSize.Height <= 0)
                 return;
 
-            const double gridSize = 20;
+            const double gridSize = 10;
 
             var dx = currentMouse.X - startMouse.X;
             var dy = currentMouse.Y - startMouse.Y;

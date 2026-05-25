@@ -29,11 +29,11 @@ namespace UICharts
             containerRegistry.Register<IBlockResizeService, BlockResizeService>();
             containerRegistry.Register<IConnectionRoutingService, ConnectionRoutingService>();
         }
-
-        // добавить модуль справки (типа подсказок)
         protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
         {
             moduleCatalog.AddModule<HelpModule>();
+            moduleCatalog.AddModule<PngExportModule>();
+            moduleCatalog.AddModule<ProjectStorageModule>();
         }
     }
 }

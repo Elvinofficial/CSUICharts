@@ -13,7 +13,6 @@ namespace UICharts.Desktop.ViewModels
 {
     public class MainWindowViewModel : BindableBase
     {
-        private readonly IPngExportService pngExportService;
         public ObservableCollection<WorkspaceItemModel> Workspaces { get; } = new();
 
         private readonly IProjectService projectService;
@@ -62,7 +61,6 @@ namespace UICharts.Desktop.ViewModels
             Toolbox = toolboxViewModel;
             Editor = editorViewModel;
             this.projectService = projectService;
-            this.pngExportService = pngExportService;
             Toolbox.PropertyChanged += (_, e) =>
             {
                 if (e.PropertyName == nameof(ToolboxViewModel.SelectedFigure))
@@ -99,31 +97,15 @@ namespace UICharts.Desktop.ViewModels
         }
         private void SaveProject()
         {
-            if (SelectedWorkspace == null)
-                return;
-
-            var dialog = new SaveFileDialog
+            if (SelectedWorkspace?.Diagram == null)
             {
-                Title = "Сохранить диаграмму",
-                Filter = "JSON файл (*.json)|*.json",
-                FileName = $"{SelectedWorkspace.Name}.json",
-                DefaultExt = ".json",
-                AddExtension = true
-            };
-
-            if (dialog.ShowDialog() != true)
+                MessageBox.Show("Нет активной диаграммы для сохранения.");
                 return;
+            }
 
-
-            var fileNameWithoutExt = Path.GetFileNameWithoutExtension(dialog.FileName);
-
-            SelectedWorkspace.Diagram.Name = fileNameWithoutExt;
-            SelectedWorkspace.Name = fileNameWithoutExt;
-
-            projectService.SaveDiagram(
-                SelectedWorkspace.Diagram,
-                dialog.FileName);
-            MessageBox.Show("Диаграмма успешно сохранена.");
+            eventAggregator
+                .GetEvent<SaveProjectRequestedEvent>()
+                .Publish(SelectedWorkspace.Diagram);
         }
 
         private void LoadProject()
@@ -186,9 +168,12 @@ namespace UICharts.Desktop.ViewModels
         {
             if (parameter is not Window window)
             {
-                MessageBox.Show("Не удалось получить область для экспорта.");
+                MessageBox.Show("Не удалось получить окно приложения.");
                 return;
             }
+
+            Editor.ClearSelection();
+
             var canvas = FindChild<FrameworkElement>(window, "EditorCanvas");
 
             if (canvas == null)
@@ -196,28 +181,10 @@ namespace UICharts.Desktop.ViewModels
                 MessageBox.Show("Не удалось найти рабочее поле для экспорта.");
                 return;
             }
-            var dialog = new SaveFileDialog
-            {
-                Title = "Экспортировать в PNG",
-                Filter = "PNG изображение (*.png)|*.png",
-                FileName = "diagram.png",
-                DefaultExt = ".png",
-                AddExtension = true
-            };
 
-            if (dialog.ShowDialog() != true)
-                return;
-
-            try
-            {
-                Editor.ClearSelection();
-                pngExportService.ExportToPng(canvas, dialog.FileName);
-                MessageBox.Show("Диаграмма экспортирована в PNG.");
-            }
-            catch (InvalidOperationException ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+            eventAggregator
+                .GetEvent<ExportPngRequestedEvent>()
+                .Publish(canvas);
         }
 
     }

@@ -4,6 +4,9 @@ namespace UICharts.Desktop.Services.Interfaces
 {
     public interface IPngExportService
     {
-        void ExportToPng(FrameworkElement element, string filePath);
+        void ExportToPng(
+    FrameworkElement element,
+    Rect bounds,
+    string filePath);
     }
 }

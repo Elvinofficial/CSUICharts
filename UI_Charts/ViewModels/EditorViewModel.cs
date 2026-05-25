@@ -669,7 +669,7 @@ namespace UICharts.Desktop.ViewModels
         }
 
 
-        private double Snap(double value, double gridSize = 20)
+        private double Snap(double value, double gridSize = 10)
         {
             return Math.Round(value / gridSize) * gridSize;
         }

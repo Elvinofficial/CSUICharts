@@ -43,6 +43,8 @@
             <TextBlock Text="• Shift + клик — создание связи"/>
             <TextBlock Text="• Delete — удаление выбранного блока"/>
             <TextBlock Text="• Синий маркер — изменение размера"/>
+            <TextBlock Text="• Alt + клик — создание перелома на линии"/>
+            <TextBlock Text="• правый клик + подтверждение — удаление перелома на линии"/>
 
             <Separator Margin="0,15"/>
 

@@ -13,62 +13,65 @@ namespace UICharts.Desktop.Services
     public class PngExportService : IPngExportService
     {
         private const double PADDING = 30;
-        public void ExportToPng(FrameworkElement element, string filePath)
+        public void ExportToPng(
+     FrameworkElement element,
+     Rect bounds,
+     string filePath)
         {
             if (element == null)
                 return;
-            
+
             element.UpdateLayout();
 
-            var bounds = VisualTreeHelper.GetDescendantBounds(element);
+            bounds = Rect.Intersect(
+                bounds,
+                new Rect(0, 0, element.ActualWidth, element.ActualHeight));
 
             if (bounds.IsEmpty || bounds.Width <= 0 || bounds.Height <= 0)
                 return;
 
-            bounds.Inflate(PADDING, PADDING);
+            var dpi = 96d;
 
-            var width = (int)Math.Ceiling(bounds.Width);
-            var height = (int)Math.Ceiling(bounds.Height);
-
-            var renderBitmap = new RenderTargetBitmap(
-                width,
-                height,
-                96,
-                96,
+            var renderTarget = new RenderTargetBitmap(
+                (int)Math.Ceiling(bounds.Width),
+                (int)Math.Ceiling(bounds.Height),
+                dpi,
+                dpi,
                 PixelFormats.Pbgra32);
 
             var visual = new DrawingVisual();
 
             using (var context = visual.RenderOpen())
             {
+                var outputRect = new Rect(0, 0, bounds.Width, bounds.Height);
+
                 context.DrawRectangle(
                     Brushes.White,
                     null,
-                    new Rect(0, 0, width, height));
+                    outputRect);
 
                 var brush = new VisualBrush(element)
                 {
                     ViewboxUnits = BrushMappingMode.Absolute,
                     Viewbox = bounds,
                     ViewportUnits = BrushMappingMode.Absolute,
-                    Viewport = new Rect(0, 0, width, height),
+                    Viewport = outputRect,
                     Stretch = Stretch.Fill
                 };
 
                 context.DrawRectangle(
                     brush,
                     null,
-                    new Rect(0,0, width, height));
+                    outputRect);
             }
 
-            renderBitmap.Render(visual);
+            renderTarget.Render(visual);
 
             var encoder = new PngBitmapEncoder();
-            encoder.Frames.Add(BitmapFrame.Create(renderBitmap));
+            encoder.Frames.Add(BitmapFrame.Create(renderTarget));
 
-            using var fileStream = new FileStream(filePath, FileMode.Create);
-            encoder.Save(fileStream);
-            
+            using var stream = File.Create(filePath);
+            encoder.Save(stream);
         }
     }
 }
