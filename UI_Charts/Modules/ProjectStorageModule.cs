@@ -1,7 +1,4 @@
 ﻿using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows;
 using UICharts.Core.Interfaces;
 using UICharts.Core.Models;
@@ -52,6 +49,11 @@ namespace UICharts.Desktop.Modules
 
             if (dialog.ShowDialog() != true)
                 return;
+
+
+            string filename = dialog.SafeFileName.Replace(".json","");
+
+            diagram.Name = filename;
 
             projectService.SaveDiagram(diagram, dialog.FileName);
 
