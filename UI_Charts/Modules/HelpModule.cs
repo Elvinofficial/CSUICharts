@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-//using System.Windows;
 using UICharts.Desktop.Events;
 using UICharts.Desktop.Views;
 using Prism.Modularity;
@@ -24,7 +23,7 @@ namespace UICharts.Desktop.Modules
 
         public void OnInitialized(IContainerProvider containerProvider)
         {
-            //MessageBox.Show("HelpModule initialized");
+            
             eventAggregator
                 .GetEvent<ShowHelpRequestedEvent>()
                 .Subscribe(OpenHelpWindow, keepSubscriberReferenceAlive: true);
@@ -32,7 +31,7 @@ namespace UICharts.Desktop.Modules
 
         private void OpenHelpWindow()
         {
-            //MessageBox.Show("OpenHelpWindow");
+            
             var window = new HelpWindow
             {
                 Owner = Application.Current.MainWindow
